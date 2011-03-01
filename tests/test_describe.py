@@ -1,74 +1,43 @@
 # -*- coding: utf-8 -*-
 import unittest
-
-from sqlalchemy import Column, Integer, Unicode
-from sqlalchemy.ext.declarative import declarative_base
-
 import sadisplay
+import model
 
 
 class TestDescribe(unittest.TestCase):
 
-    def setUp(self):
-        self.BASE = declarative_base()
-
     def test_single(self):
 
-        class User(self.BASE):
-            __tablename__ = 'user_table'
-
-            id = Column(Integer, primary_key=True)
-            name = Column(Unicode(50))
-
-            def login(self):
-                pass
-
-        objects, relations, inhirets = sadisplay.describe([User])
+        objects, relations, inherits = sadisplay.describe([model.User])
 
         assert len(objects) == 1
         assert relations == []
-        assert inhirets == []
+        assert inherits == []
         assert objects[0] == {
-                'name': User.__name__,
-                'attributes': [('Integer', 'id'), ('Unicode', 'name')],
-                'methods': ['login'],
+                'name': model.User.__name__,
+                'attributes': [('Integer', 'id'), ('Unicode', 'name'), ],
+                'methods': ['login', ],
             }
 
     def test_subclass(self):
 
-        class User(self.BASE):
-            __tablename__ = 'user_table'
-
-            id = Column(Integer, primary_key=True)
-
-            def login(self):
-                pass
-
-        class Admin(self.BASE):
-            __tablename__ = 'admin_table'
-
-            id = Column(Integer, primary_key=True)
-
-            def permissions(self):
-                pass
-
-        objects, relations, inhirets = sadisplay.describe([User, Admin])
+        objects, relations, inherits = sadisplay \
+                .describe([model.User, model.Admin])
 
         assert len(objects) == 2
-        assert relations == []
-        assert inhirets == []
-        assert objects[0] == {
-                'name': User.__name__,
-                'attributes': [('Integer', 'id'),],
-                'methods': ['login',],
-            }
-
+        assert len(inherits) == 1
         assert objects[1] == {
-                'name': Admin.__name__,
-                'attributes': [('Integer', 'id'),],
-                'methods': ['permissions',],
+                'name': model.Admin.__name__,
+                'attributes': [('Integer', 'id'),
+                    ('Unicode', 'name'),
+                    ('Unicode', 'phone'), ],
+                'methods': ['permissions', ],
             }
 
+        assert inherits[0] == {
+                'child': model.Admin.__name__,
+                'parent': model.User.__name__,
+            }
 
 if __name__ == '__main__':
     unittest.main()
