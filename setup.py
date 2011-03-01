@@ -15,7 +15,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'SqlAlchemy >=5.0',
+        'SQLAlchemy >= 0.5',
     ],
     classifiers=[
         'Intended Audience :: Developers',
