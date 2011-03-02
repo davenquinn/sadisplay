@@ -45,6 +45,12 @@ class TestDescribe(unittest.TestCase):
                 .describe([model.User, model.Address])
 
         assert len(objects) == 2
+        assert objects[1] == {
+                'name': model.Address.__name__,
+                'attributes': [('Integer', 'id'), ('Integer', 'user_id'), ],
+                'methods': [],
+            }
+
         assert len(inherits) == 0
         assert relations[0] == {
                 'from': model.Address.__name__,
