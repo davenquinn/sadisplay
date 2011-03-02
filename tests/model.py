@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import Column, Integer, Unicode, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relation
 
 
 BASE = declarative_base()
@@ -25,3 +26,11 @@ class Admin(User):
 
     def permissions(self):
         pass
+
+
+class Address(BASE):
+    __tablename__ = 'address_table'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user_table.id'))
+    user = relation(User, backref="address")

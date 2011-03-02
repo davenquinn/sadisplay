@@ -19,7 +19,7 @@ class TestDescribe(unittest.TestCase):
                 'methods': ['login', ],
             }
 
-    def test_subclass(self):
+    def test_inherits(self):
 
         objects, relations, inherits = sadisplay \
                 .describe([model.User, model.Admin])
@@ -38,6 +38,20 @@ class TestDescribe(unittest.TestCase):
                 'child': model.Admin.__name__,
                 'parent': model.User.__name__,
             }
+
+    def test_relation(self):
+
+        objects, relations, inherits = sadisplay \
+                .describe([model.User, model.Address])
+
+        assert len(objects) == 2
+        assert len(inherits) == 0
+        assert relations[0] == {
+                'from': model.Address.__name__,
+                'to': model.User.__name__,
+                'by': 'user_id',
+            }
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -3,10 +3,9 @@ import uuid
 import types
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, ForeignKey
-from sqlalchemy.orm.properties import PropertyLoader
 
 
-def describe(mappers, methods=True):
+def describe(classes, methods=True):
     """
     """
 
@@ -14,9 +13,9 @@ def describe(mappers, methods=True):
     relations = []
     inherits = []
 
-    for mapper in mappers:
+    for cls in classes:
 
-        mapper = class_mapper(mapper)
+        mapper = class_mapper(cls)
 
         entry = {
             'name': mapper.class_.__name__,
@@ -60,12 +59,17 @@ def describe(mappers, methods=True):
 
         objects.append(entry)
 
-        for loader in mapper.iterate_properties:
-            if isinstance(loader, PropertyLoader) and loader.mapper in mappers:
-                if hasattr(loader, 'reverse_property'):
-                    relations.add(frozenset([loader, loader.reverse_property]))
-                else:
-                    relations.add(frozenset([loader]))
+        # Detect relations by ForeignKey
+        for col in mapper.columns:
+            for fk in col.foreign_keys:
+                table = fk.column.table
+                for c in classes:
+                    if table == c.__table__:
+                        relations.append({
+                            'from': cls.__name__,
+                            'by': col.name,
+                            'to': c.__name__,
+                        })
 
         if mapper.inherits:
             inherits.append({
