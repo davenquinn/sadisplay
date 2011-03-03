@@ -78,3 +78,37 @@ def describe(classes, methods=True):
             })
 
     return objects, relations, inherits
+
+
+def plantuml(desc):
+
+    classes, relations, inherits = desc
+
+    CLASS_TEMPLATE = "Class %(name)s {\n%(attributes)s\n%(methods)s\n}\n"
+
+    ATTRIBUTE_TEMPLATE = "\t%(type)s \t\t%(name)s"
+
+    METHOD_TEMPLATE = "\t%(name)s()"
+
+    INHERIT_TEMPLATE = "%(parent)s <|-- %(child)s\n"
+
+    result = []
+    for cls in classes:
+        renderd = CLASS_TEMPLATE % {
+                'name': cls['name'],
+                'attributes': '\n'.join([
+                    ATTRIBUTE_TEMPLATE % {'type': a[0], 'name': a[1]}
+                        for a in cls['attributes']
+                ]),
+                'methods': '\n'.join([
+                    METHOD_TEMPLATE % {'name': m}
+                        for m in cls['methods']
+                ]),
+            }
+
+        result.append(renderd)
+
+    for item in inherits:
+        result.append(INHERIT_TEMPLATE % item)
+
+    return '\n'.join(result)
