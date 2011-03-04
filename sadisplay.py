@@ -5,17 +5,70 @@ from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, ForeignKey
 
 
-def describe(classes, methods=True):
-    """
+__version__ = '0.1dev'
+
+
+def describe(items, methods=True):
+    """Detecting mapper attributes, inherits and relations
+
+    :param items: list of mappers to describe
+
+    Return tuple (objects, relations, inherits)
+
+
+    Where objects is list::
+
+        [{
+            'name': '<Mapper class name>',
+            'attributes': [
+                ('<Mapper column type class name>', '<Mapper column name>'), ...
+            ]
+            'methods': ['<Method name>', ...]
+        }, ...]
+
+
+    Relations is::
+
+        [{
+            'from': '<From mapper class name>',
+            'by': '<By mapper foreign key column name>',
+            'to': '<To mapper class name>',
+        }, ...]
+
+
+    Inherits is::
+
+        [{
+            'parent': '<Mapper base class name>',
+            'child': '<Mapper subclass of `parent` class name>',
+        }, ...]
+
+
+    Example usage::
+
+        import sadisplay
+        from app import models
+
+        desc = sadisplay.describe([
+            getattr(model, attr) for attr in dir(model)
+        ])
+
+        desc = sadisplay.describe([models.User, models.Group])
     """
 
     objects = []
     relations = []
     inherits = []
 
-    for cls in classes:
+    mappers = []
 
-        mapper = class_mapper(cls)
+    for item in items:
+        try:
+            mappers.append(class_mapper(item))
+        except:
+            pass
+
+    for mapper in mappers:
 
         entry = {
             'name': mapper.class_.__name__,
@@ -63,12 +116,12 @@ def describe(classes, methods=True):
         for col in mapper.columns:
             for fk in col.foreign_keys:
                 table = fk.column.table
-                for c in classes:
-                    if table == c.__table__:
+                for m in mappers:
+                    if table == m.class_.__table__:
                         relations.append({
-                            'from': cls.__name__,
+                            'from': mapper.class_.__name__,
                             'by': col.name,
-                            'to': c.__name__,
+                            'to': m.class_.__name__,
                         })
 
         if mapper.inherits:
@@ -81,6 +134,12 @@ def describe(classes, methods=True):
 
 
 def plantuml(desc):
+    """Generate plantuml class diagram
+
+    :param desc: result of sadisplay.describe function
+
+    Return plantuml class diagram string
+    """
 
     classes, relations, inherits = desc
 
@@ -92,7 +151,10 @@ def plantuml(desc):
 
     INHERIT_TEMPLATE = "%(parent)s <|-- %(child)s\n"
 
-    result = []
+    RELATION_TEMPLATE = "%(from)s <--o %(to)s: %(by)s\n"
+
+    result = ['@startuml']
+
     for cls in classes:
         renderd = CLASS_TEMPLATE % {
                 'name': cls['name'],
@@ -110,5 +172,13 @@ def plantuml(desc):
 
     for item in inherits:
         result.append(INHERIT_TEMPLATE % item)
+
+    for item in relations:
+        result.append(RELATION_TEMPLATE % item)
+
+    result += [
+        'right footer sadisplay v%s' % __version__,
+        '@enduml',
+    ]
 
     return '\n'.join(result)
