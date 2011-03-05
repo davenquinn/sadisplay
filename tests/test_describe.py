@@ -15,7 +15,8 @@ class TestDescribe(unittest.TestCase):
         assert inherits == []
         assert objects[0] == {
                 'name': model.User.__name__,
-                'attributes': [('Integer', 'id'), ('Unicode', 'name'), ],
+                'cols': [('Integer', 'id'), ('Unicode', 'name'), ],
+                'props': [],
                 'methods': ['login', ],
             }
 
@@ -28,9 +29,10 @@ class TestDescribe(unittest.TestCase):
         assert len(inherits) == 1
         assert objects[1] == {
                 'name': model.Admin.__name__,
-                'attributes': [('Integer', 'id'),
+                'cols': [('Integer', 'id'),
                     ('Unicode', 'name'),
                     ('Unicode', 'phone'), ],
+                'props': [],
                 'methods': ['permissions', ],
             }
 
@@ -47,7 +49,8 @@ class TestDescribe(unittest.TestCase):
         assert len(objects) == 2
         assert objects[1] == {
                 'name': model.Address.__name__,
-                'attributes': [('Integer', 'id'), ('Integer', 'user_id'), ],
+                'cols': [('Integer', 'id'), ('Integer', 'user_id'), ],
+                'props': ['user'],
                 'methods': [],
             }
 

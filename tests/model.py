@@ -16,6 +16,8 @@ class User(BASE):
     def login(self):
         pass
 
+    def __repr__(self):
+        pass
 
 class Admin(User):
     __tablename__ = 'admin_table'
@@ -27,6 +29,8 @@ class Admin(User):
     def permissions(self):
         pass
 
+    def __unicode__(self):
+        pass
 
 class Address(BASE):
     __tablename__ = 'address_table'

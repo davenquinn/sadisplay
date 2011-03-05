@@ -3,12 +3,13 @@ import uuid
 import types
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy.orm.properties import PropertyLoader
 
 
 __version__ = '0.1dev'
 
 
-def describe(items, methods=True):
+def describe(items, show_methods=True, show_properties=True):
     """Detecting mapper attributes, inherits and relations
 
     :param items: list of mappers to describe
@@ -20,10 +21,12 @@ def describe(items, methods=True):
 
         [{
             'name': '<Mapper class name>',
-            'attributes': [
-                ('<Mapper column type class name>', '<Mapper column name>'), ...
-            ]
-            'methods': ['<Method name>', ...]
+            'cols': [
+                ('<Mapper column type class name>', '<Mapper column name>'),
+                ...
+            ],
+            'props': ['<Property name>'],
+            'methods': ['<Method name>', ...],
         }, ...]
 
 
@@ -72,12 +75,13 @@ def describe(items, methods=True):
 
         entry = {
             'name': mapper.class_.__name__,
-            'attributes': [(col.type.__class__.__name__, col.name)
+            'cols': [(col.type.__class__.__name__, col.name)
                             for col in mapper.columns],
+            'props': [],
             'methods': [],
         }
 
-        if methods:
+        if show_methods:
 
             suffix = '%s' % str(uuid.uuid4())
 
@@ -106,9 +110,17 @@ def describe(items, methods=True):
 
             # Filter mapper methods
             for name, func in mapper.class_.__dict__.iteritems():
-                if name not in base_keys:
+                if name[0] != '_' and name not in base_keys:
                     if isinstance(func, types.FunctionType):
                         entry['methods'].append(name)
+
+
+        if show_properties:
+            for loader in mapper.iterate_properties:
+                if isinstance(loader, PropertyLoader) \
+                        and loader.mapper in mappers:
+                    entry['props'].append(loader.key)
+
 
         objects.append(entry)
 
@@ -143,9 +155,11 @@ def plantuml(desc):
 
     classes, relations, inherits = desc
 
-    CLASS_TEMPLATE = "Class %(name)s {\n%(attributes)s\n%(methods)s\n}\n"
+    CLASS_TEMPLATE = "Class %(name)s {\n%(cols)s\n%(props)s\n%(methods)s\n}\n"
 
-    ATTRIBUTE_TEMPLATE = "\t%(type)s \t\t%(name)s"
+    COLUMN_TEMPLATE = "\t%(type)s \t\t%(name)s"
+
+    PROPERTY_TEMPLATE = "\t+\t\t%(name)s"
 
     METHOD_TEMPLATE = "\t%(name)s()"
 
@@ -158,9 +172,13 @@ def plantuml(desc):
     for cls in classes:
         renderd = CLASS_TEMPLATE % {
                 'name': cls['name'],
-                'attributes': '\n'.join([
-                    ATTRIBUTE_TEMPLATE % {'type': a[0], 'name': a[1]}
-                        for a in cls['attributes']
+                'cols': '\n'.join([
+                    COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]}
+                        for c in cls['cols']
+                ]),
+                'props': '\n'.join([
+                    PROPERTY_TEMPLATE % {'name': p}
+                        for p in cls['props']
                 ]),
                 'methods': '\n'.join([
                     METHOD_TEMPLATE % {'name': m}
