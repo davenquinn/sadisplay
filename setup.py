@@ -1,10 +1,26 @@
 # -*- coding: utf-8 -*-
+import re
+import os
 from setuptools import setup
+
+
+here = os.path.dirname(os.path.abspath(__file__))
+version_re = re.compile(r"__version__ = (\'.*?\')")
+f = open(os.path.join(here, 'sadisplay.py'))
+version = None
+for line in f:
+    match = version_re.search(line)
+    if match:
+        version = eval(match.group(1))
+        break
+else:
+    raise Exception("Cannot find version in sadisplay.py")
+f.close()
 
 
 setup(
     name='sadisplay',
-    version='0.1dev',
+    version=version,
     url='http://bitbucket.org/estin/sadisplay',
     license='BSD',
     author='Evgeniy Tatarkin',

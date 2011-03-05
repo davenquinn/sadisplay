@@ -6,13 +6,15 @@ from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm.properties import PropertyLoader
 
 
-__version__ = '0.1dev'
+__version__ = '0.2dev'
 
 
 def describe(items, show_methods=True, show_properties=True):
     """Detecting mapper attributes, inherits and relations
 
     :param items: list of mappers to describe
+    :param show_methods: do detection of methods
+    :param show_properties: do detection of properties
 
     Return tuple (objects, relations, inherits)
 
