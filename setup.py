@@ -26,7 +26,7 @@ setup(
     author='Evgeniy Tatarkin',
     author_email='tatarkin.evg@gmail.com',
     description='SqlAlchemy schema display script',
-    long_description=open('README.rst').read(),
+    long_description=open(os.path.join(here, 'README.rst')).read(),
     py_modules=['sadisplay'],
     zip_safe=False,
     platforms='any',

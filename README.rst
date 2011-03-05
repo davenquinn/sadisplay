@@ -12,7 +12,9 @@ Supports mapped class inherit.
 
 
 Output formats:
+
  * `PlantUML <http://plantuml.sourceforge.net/>`_ class diagram
+
 
 
 Requirements

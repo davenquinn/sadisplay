@@ -61,6 +61,20 @@ class TestDescribe(unittest.TestCase):
                 'by': 'user_id',
             }
 
+    def test_table(self):
+
+        objects, relations, inherits = sadisplay \
+                .describe([model.Book])
+
+        assert objects[0] == {
+                'name': model.Book.__name__,
+                'cols': [('Integer', 'id'),
+                        ('Unicode', 'title'),
+                        ('Integer', 'user_id'), ],
+                'props': [],
+                'methods': [],
+            }
+
 
 if __name__ == '__main__':
     unittest.main()

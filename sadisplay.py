@@ -116,13 +116,11 @@ def describe(items, show_methods=True, show_properties=True):
                     if isinstance(func, types.FunctionType):
                         entry['methods'].append(name)
 
-
         if show_properties:
             for loader in mapper.iterate_properties:
                 if isinstance(loader, PropertyLoader) \
                         and loader.mapper in mappers:
                     entry['props'].append(loader.key)
-
 
         objects.append(entry)
 
@@ -131,12 +129,15 @@ def describe(items, show_methods=True, show_properties=True):
             for fk in col.foreign_keys:
                 table = fk.column.table
                 for m in mappers:
-                    if table == m.class_.__table__:
-                        relations.append({
-                            'from': mapper.class_.__name__,
-                            'by': col.name,
-                            'to': m.class_.__name__,
-                        })
+                    try:
+                        if str(table) == str(m.mapped_table.name):
+                            relations.append({
+                                'from': mapper.class_.__name__,
+                                'by': col.name,
+                                'to': m.class_.__name__,
+                            })
+                    except AttributeError:
+                        pass
 
         if mapper.inherits:
             inherits.append({
