@@ -26,7 +26,11 @@ Requirements
 Install
 =======
 
-Only from bitbucket::
+::
+
+    pip install sadisplay
+
+From bitbucket::
 
     pip install http://bitbucket.org/estin/sadisplay/get/tip.tar.gz
     # or
