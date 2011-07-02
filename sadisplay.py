@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import uuid
 import types
-from sqlalchemy.orm import class_mapper
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy.orm import class_mapper, exc
+from sqlalchemy import Column, Integer
 from sqlalchemy.orm.properties import PropertyLoader
 
 
-__version__ = '0.2dev'
+__version__ = '0.3dev'
 
 
 def describe(items, show_methods=True, show_properties=True):
@@ -41,14 +41,6 @@ def describe(items, show_methods=True, show_properties=True):
         }, ...]
 
 
-    Inherits is::
-
-        [{
-            'parent': '<Mapper base class name>',
-            'child': '<Mapper subclass of `parent` class name>',
-        }, ...]
-
-
     Example usage::
 
         import sadisplay
@@ -70,8 +62,16 @@ def describe(items, show_methods=True, show_properties=True):
     for item in items:
         try:
             mappers.append(class_mapper(item))
+        except exc.UnmappedClassError:
+            from sqlalchemy.orm import mapper
+            # create mapper
+            dummy_class = type(item.name, tuple(), {})
+            #dummy_class = object()
+            mapper(dummy_class, item, {})
+            mappers.append(class_mapper(dummy_class))
         except:
             pass
+
 
     for mapper in mappers:
 
@@ -85,34 +85,25 @@ def describe(items, show_methods=True, show_properties=True):
 
         if show_methods:
 
-            suffix = '%s' % str(uuid.uuid4())
-
-            # Create the DummyClass subclass of mapper bases
-            # for detecting mapper own methods
-
-            params = {'__tablename__': 'dummy_table_%s' % suffix}
-
             if mapper.inherits:
-                params['__mapper_args__'] = {'polymorphic_identity':
-                        mapper.inherits.class_.__tablename__}
-
-                # Get primary key
-                pk = [col for col in mapper.columns if col.primary_key]
-
-                # ForeignKey for inherited class
-                params['dummy_id_col'] = Column(pk[0].type,
-                        ForeignKey(pk[0]), primary_key=True)
+                base_methods = mapper.inherits.class_.__dict__.keys()
             else:
-                params['dummy_id_col'] = Column(Integer, primary_key=True)
+                # Create the DummyClass subclass of mapper bases
+                # for detecting mapper own methods
+                suffix = '%s' % str(uuid.uuid4())
+                params = {
+                    '__tablename__': 'dummy_table_%s' % suffix,
+                    'dummy_id_col': Column(Integer, primary_key=True)
+                }
 
-            DummyClass = type('Dummy%s' % suffix,
-                    mapper.class_.__bases__, params)
+                DummyClass = type('Dummy%s' % suffix,
+                        mapper.class_.__bases__, params)
 
-            base_keys = DummyClass.__dict__.keys()
+                base_methods = DummyClass.__dict__.keys()
 
             # Filter mapper methods
             for name, func in mapper.class_.__dict__.iteritems():
-                if name[0] != '_' and name not in base_keys:
+                if name[0] != '_' and name not in base_methods:
                     if isinstance(func, types.FunctionType):
                         entry['methods'].append(name)
 

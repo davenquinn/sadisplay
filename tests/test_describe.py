@@ -6,7 +6,7 @@ import model
 
 class TestDescribe(unittest.TestCase):
 
-    def test_single(self):
+    def test_single_mapper(self):
 
         objects, relations, inherits = sadisplay.describe([model.User])
 
@@ -18,6 +18,22 @@ class TestDescribe(unittest.TestCase):
                 'cols': [('Integer', 'id'), ('Unicode', 'name'), ],
                 'props': [],
                 'methods': ['login', ],
+            }
+
+    def test_single_table(self):
+
+        objects, relations, inherits = sadisplay.describe([model.notes])
+
+        assert len(objects) == 1
+        assert relations == []
+        assert inherits == []
+        assert objects[0] == {
+                'name': model.notes.name,
+                'cols': [('Integer', 'id'),
+                    ('Unicode', 'name'),
+                    ('Integer', 'user_id')],
+                'props': [],
+                'methods': [],
             }
 
     def test_inherits(self):

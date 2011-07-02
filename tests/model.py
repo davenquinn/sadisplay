@@ -54,3 +54,11 @@ class Book(object):
 
 
 mapper(Book, books, {'user': relation(User, backref='books')})
+
+
+# Not mapped table
+notes = Table('notes', BASE.metadata,
+    Column('id', Integer, primary_key=True),
+    Column('name', Unicode(200), nullable=False),
+    Column('user_id', Integer, ForeignKey('user_table.id')),
+)
