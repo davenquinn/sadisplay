@@ -10,9 +10,9 @@ __version__ = '0.3dev'
 
 
 def describe(items, show_methods=True, show_properties=True):
-    """Detecting mapper attributes, inherits and relations
+    """Detecting attributes, inherits and relations
 
-    :param items: list of mappers to describe
+    :param items: list of objects to describe
     :param show_methods: do detection of methods
     :param show_properties: do detection of properties
 
@@ -22,9 +22,9 @@ def describe(items, show_methods=True, show_properties=True):
     Where objects is list::
 
         [{
-            'name': '<Mapper class name>',
+            'name': '<Mapper class name or table name>',
             'cols': [
-                ('<Mapper column type class name>', '<Mapper column name>'),
+                ('<Column type class name>', '<Column name>'),
                 ...
             ],
             'props': ['<Property name>'],
@@ -53,40 +53,63 @@ def describe(items, show_methods=True, show_properties=True):
         desc = sadisplay.describe([models.User, models.Group])
     """
 
+    class EntryItem(object):
+        """Class adaptor for mapped classes and tables"""
+        name = None
+        methods = []
+        columns = []
+        inherits = None
+        properties = []
+        bases = tuple()
+
+        def __init__(self, mapper=None, table=None):
+
+            if mapper is not None:
+                self.name = mapper.class_.__name__
+                self.columns = mapper.columns
+                self.methods = mapper.class_.__dict__.iteritems()
+                self.inherits = mapper.inherits
+                self.properties = mapper.iterate_properties
+                self.bases = mapper.class_.__bases__
+                self.class_ = mapper.class_
+                self.table_name = mapper.mapped_table
+
+            elif table is not None:
+                self.name = table.name
+                self.table_name = table.name
+                self.columns = table.columns
+            else:
+                pass
+
+        def __eq__(self, other):
+            return self.name == other
+
     objects = []
     relations = []
     inherits = []
 
-    mappers = []
+    entries = []
 
     for item in items:
         try:
-            mappers.append(class_mapper(item))
+            entries.append(EntryItem(mapper=class_mapper(item)))
         except exc.UnmappedClassError:
-            from sqlalchemy.orm import mapper
-            # create mapper
-            dummy_class = type(item.name, tuple(), {})
-            #dummy_class = object()
-            mapper(dummy_class, item, {})
-            mappers.append(class_mapper(dummy_class))
-        except:
-            pass
+            entries.append(EntryItem(table=item))
 
+    for entry in entries:
 
-    for mapper in mappers:
-
-        entry = {
-            'name': mapper.class_.__name__,
+        result_item = {
+            'name': entry.name,
             'cols': [(col.type.__class__.__name__, col.name)
-                            for col in mapper.columns],
+                            for col in entry.columns],
             'props': [],
             'methods': [],
         }
 
-        if show_methods:
+        if show_methods and entry.methods:
 
-            if mapper.inherits:
-                base_methods = mapper.inherits.class_.__dict__.keys()
+            if entry.inherits:
+                base_methods = entry.inherits.class_.__dict__.keys()
             else:
                 # Create the DummyClass subclass of mapper bases
                 # for detecting mapper own methods
@@ -97,43 +120,43 @@ def describe(items, show_methods=True, show_properties=True):
                 }
 
                 DummyClass = type('Dummy%s' % suffix,
-                        mapper.class_.__bases__, params)
+                        entry.bases, params)
 
                 base_methods = DummyClass.__dict__.keys()
 
             # Filter mapper methods
-            for name, func in mapper.class_.__dict__.iteritems():
+            for name, func in entry.methods:
                 if name[0] != '_' and name not in base_methods:
                     if isinstance(func, types.FunctionType):
-                        entry['methods'].append(name)
+                        result_item['methods'].append(name)
 
-        if show_properties:
-            for loader in mapper.iterate_properties:
+        if show_properties and entry.properties:
+            for loader in entry.properties:
                 if isinstance(loader, PropertyLoader) \
-                        and loader.mapper in mappers:
-                    entry['props'].append(loader.key)
+                        and loader.mapper.class_.__name__ in entries:
+                    result_item['props'].append(loader.key)
 
-        objects.append(entry)
+        objects.append(result_item)
 
         # Detect relations by ForeignKey
-        for col in mapper.columns:
+        for col in entry.columns:
             for fk in col.foreign_keys:
                 table = fk.column.table
-                for m in mappers:
+                for m in entries:
                     try:
-                        if str(table) == str(m.mapped_table.name):
+                        if str(table) == str(m.table_name):
                             relations.append({
-                                'from': mapper.class_.__name__,
+                                'from': entry.name,
                                 'by': col.name,
-                                'to': m.class_.__name__,
+                                'to': m.name,
                             })
                     except AttributeError:
                         pass
 
-        if mapper.inherits:
+        if entry.inherits:
             inherits.append({
-                'child': mapper.class_.__name__,
-                'parent': mapper.inherits.class_.__name__,
+                'child': entry.name,
+                'parent': EntryItem(mapper=entry.inherits).name,
             })
 
     return objects, relations, inherits
