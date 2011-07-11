@@ -6,7 +6,7 @@ from setuptools import setup
 
 here = os.path.dirname(os.path.abspath(__file__))
 version_re = re.compile(r"__version__ = (\'.*?\')")
-f = open(os.path.join(here, 'sadisplay.py'))
+f = open(os.path.join(os.path.join(here, 'sadisplay'), '__init__.py'))
 version = None
 for line in f:
     match = version_re.search(line)
@@ -27,12 +27,16 @@ setup(
     author_email='tatarkin.evg@gmail.com',
     description='SqlAlchemy schema display script',
     long_description=open(os.path.join(here, 'README.rst')).read(),
-    py_modules=['sadisplay'],
+    packages=['sadisplay'],
     zip_safe=False,
     platforms='any',
     install_requires=[
         'SQLAlchemy >= 0.5',
     ],
+    entry_points={
+        'console_scripts':
+            ['sadisplay = sadisplay.reflect:run', ]
+    },
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
