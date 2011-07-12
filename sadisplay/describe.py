@@ -2,7 +2,7 @@
 import uuid
 import types
 from sqlalchemy.orm import class_mapper, exc
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, Table
 from sqlalchemy.orm.properties import PropertyLoader
 
 
@@ -91,7 +91,8 @@ def describe(items, show_methods=True, show_properties=True):
         try:
             entries.append(EntryItem(mapper=class_mapper(item)))
         except exc.UnmappedClassError:
-            entries.append(EntryItem(table=item))
+            if isinstance(item, Table):
+                entries.append(EntryItem(table=item))
 
     for entry in entries:
 

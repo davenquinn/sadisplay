@@ -69,35 +69,60 @@ def dot(desc):
 
     classes, relations, inherits = desc
 
-    CLASS_BODY = "\n\t\tlabel=\"{%(name)s|%(cols)s|%(props)s|%(methods)s\l}\""
-    CLASS_TEMPLATE = "\t%(name)s [" + CLASS_BODY + "\n\t]\n"
+    CLASS_TEMPLATE = """
+        %(name)s [label=<
+        <TABLE BGCOLOR="lightyellow" BORDER="0"
+            CELLBORDER="0" CELLSPACING="0">
+                <TR><TD COLSPAN="2" CELLPADDING="4"
+                        ALIGN="CENTER" BGCOLOR="palegoldenrod"
+                ><FONT FACE="Helvetica Bold" COLOR="black"
+                >%(name)s</FONT></TD></TR>%(cols)s%(props)s%(methods)s
+        </TABLE>
+    >]
+    """
 
-    COLUMN_TEMPLATE = "\t%(name)s \t\t%(type)s\l"
+    COLUMN_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
+        ><FONT FACE="Bitstream Vera Sans">%(name)s</FONT
+        ></TD><TD ALIGN="LEFT"
+        ><FONT FACE="Bitstream Vera Sans">%(type)s</FONT
+        ></TD></TR>"""
 
-    PROPERTY_TEMPLATE = "\t%(name)s\l"
+    PROPERTY_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
+        BGCOLOR="palegoldenrod"
+        ><FONT FACE="Bitstream Vera Sans">%(name)s</FONT></TD
+        ><TD BGCOLOR="palegoldenrod" ALIGN="LEFT"
+        ><FONT FACE="Bitstream Vera Sans">PROPERTY</FONT
+        ></TD></TR>"""
 
-    METHOD_TEMPLATE = "\t%(name)s()\l"
+    METHOD_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
+        BGCOLOR="palegoldenrod"
+        ><FONT FACE="Bitstream Vera Sans">%(name)s</FONT></TD
+        ><TD BGCOLOR="palegoldenrod" ALIGN="LEFT"
+        ><FONT FACE="Bitstream Vera Sans">METHOD</FONT
+        ></TD></TR>"""
 
     EDGE_INHERIT = "\tedge [\n\t\tarrowhead = empty\n\t]"
     INHERIT_TEMPLATE = "\t%(child)s -> %(parent)s \n"
 
     EDGE_REL = "\tedge [\n\t\tarrowhead = ediamond\n\t\tarrowtail = open\n\t]"
-    RELATION_TEMPLATE = "\t%(from)s -> %(to)s [taillabel = \"%(by)s\"]"
+    RELATION_TEMPLATE = "\t%(from)s -> %(to)s [label = \"%(by)s\"]"
 
-    result = ["""digraph G {
-\tfontname = "Bitstream Vera Sans"
-\tfontsize = 8
+    result = ["""
+        digraph G {
+            fontname = "Bitstream Vera Sans"
+            fontsize = 8
 
-\tnode [
-\t\tfontname = "Bitstream Vera Sans"
-\t\tfontsize = 8
-\t\tshape = "record"
-\t]
+            node [
+                fontname = "Bitstream Vera Sans"
+                fontsize = 8
+                shape = "plaintext"
+            ]
 
-\tedge [
-\t\tfontname = "Bitstream Vera Sans"
-\t\tfontsize = 8
-\t]"""]
+            edge [
+                fontname = "Bitstream Vera Sans"
+                fontsize = 8
+            ]
+    """]
 
     for cls in classes:
         renderd = CLASS_TEMPLATE % {
