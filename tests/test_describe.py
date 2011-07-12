@@ -41,6 +41,7 @@ class TestDescribe(unittest.TestCase):
         objects, relations, inherits = sadisplay \
                 .describe([model.User, model.Admin])
 
+        assert len(relations) == 0
         assert len(objects) == 2
         assert len(inherits) == 1
         assert objects[1] == {

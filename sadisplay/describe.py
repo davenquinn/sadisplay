@@ -155,9 +155,18 @@ def describe(items, show_methods=True, show_properties=True):
                         pass
 
         if entry.inherits:
-            inherits.append({
+
+            inh = {
                 'child': entry.name,
                 'parent': EntryItem(mapper=entry.inherits).name,
-            })
+            }
+
+            inherits.append(inh)
+
+            #Delete relation by inherits
+            for i, rel in enumerate(relations):
+                if inh['child'] == rel['from'] and \
+                    inh['parent'] == rel['to']:
+                    relations.pop(i)
 
     return objects, relations, inherits
