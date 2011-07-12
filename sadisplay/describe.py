@@ -69,7 +69,7 @@ def describe(items, show_methods=True, show_properties=True):
                 self.properties = mapper.iterate_properties
                 self.bases = mapper.class_.__bases__
                 self.class_ = mapper.class_
-                self.table_name = mapper.mapped_table
+                self.table_name = unicode(mapper.mapped_table)
 
             elif table is not None:
                 self.name = table.name
@@ -91,8 +91,11 @@ def describe(items, show_methods=True, show_properties=True):
         try:
             entries.append(EntryItem(mapper=class_mapper(item)))
         except exc.UnmappedClassError:
+
             if isinstance(item, Table):
-                entries.append(EntryItem(table=item))
+                # Filter if table mapper already appended
+                if item.name not in [i.table_name for i in entries]:
+                    entries.append(EntryItem(table=item))
 
     for entry in entries:
 

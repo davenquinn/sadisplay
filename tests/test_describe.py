@@ -82,6 +82,20 @@ class TestDescribe(unittest.TestCase):
         objects, relations, inherits = sadisplay \
                 .describe([model.Book])
 
+        assert len(objects) == 1
+        assert objects[0] == {
+                'name': model.Book.__name__,
+                'cols': [('Integer', 'id'),
+                        ('Unicode', 'title'),
+                        ('Integer', 'user_id'), ],
+                'props': [],
+                'methods': [],
+            }
+
+        objects, relations, inherits = sadisplay \
+                .describe([model.Book, model.books])
+
+        assert len(objects) == 1
         assert objects[0] == {
                 'name': model.Book.__name__,
                 'cols': [('Integer', 'id'),
