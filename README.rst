@@ -6,15 +6,14 @@ sadisplay
 
 About
 =====
-Simple package for describing SQLAlchemy schema.
-Works with mapped classes. Relation detecting by `ForeignKey` columns.
-Supports mapped class inherit.
-
+Simple package for describing SQLAlchemy schema and display raw database
+tables. Relation detecting by `ForeignKey` columns.
+Supports mapped class inherit. BSD licensed.
 
 Output formats:
 
  * `PlantUML <http://plantuml.sourceforge.net/>`_ class diagram
-
+ * `DOT <http://www.graphviz.org/>`_ graphviz directed graphs
 
 
 Requirements
@@ -60,3 +59,9 @@ Render PlantUML class diagram::
 
     # or for svg format
     $ java -jar plantuml.jar -Tsvg schema.plantuml
+
+
+Also you can display you sql database tables::
+
+    $ sadisplay -u <URL connection string to db> -r dot > schema.dot
+    $ dot -Tpng schema.dot > schema.png
