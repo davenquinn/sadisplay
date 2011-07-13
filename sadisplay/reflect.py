@@ -48,10 +48,16 @@ def run():
         print 'Database tables:'
         tables = sorted(meta.tables.keys())
 
+        def _g(l, i):
+            try:
+                return tables[i]
+            except IndexError:
+                return ''
+
         for i in xrange(0, len(tables), 2):
-            print '  %s' % tables[i:i + 1][0] \
-                + ' ' * (38 - len(tables[i:i + 1][0])) \
-                + tables[i + 1:i + 2][0]
+            print '  %s' % _g(tables, i) \
+                + ' ' * (38 - len(_g(tables, i))) \
+                + _g(tables, i + 1)
 
         exit(0)
 
