@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import uuid
 import types
-from sqlalchemy.orm import class_mapper, exc
+from sqlalchemy import exc, orm
+from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, Table
 from sqlalchemy.orm.properties import PropertyLoader
 
@@ -90,7 +91,7 @@ def describe(items, show_methods=True, show_properties=True):
     for item in items:
         try:
             entries.append(EntryItem(mapper=class_mapper(item)))
-        except exc.UnmappedClassError:
+        except (exc.ArgumentError, orm.exc.UnmappedClassError):
 
             if isinstance(item, Table):
                 # Filter if table mapper already appended
