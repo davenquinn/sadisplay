@@ -39,7 +39,7 @@ def run():
         print '-u/--url option required'
         exit(1)
 
-    engine = create_engine(options.url, pool_size=5, max_overflow=0)
+    engine = create_engine(options.url)
     meta = MetaData()
 
     meta.reflect(bind=engine)
