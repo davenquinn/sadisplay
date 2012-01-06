@@ -75,6 +75,9 @@ def describe(items, show_methods=True, show_properties=True):
             elif table is not None:
                 self.name = table.name
                 self.table_name = table.name
+                # prepend schema if exists for foreign key matching
+                if hasattr(table, "schema"):
+                    self.table_name = table.schema + "." + self.table_name
                 self.columns = table.columns
             else:
                 pass
