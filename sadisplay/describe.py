@@ -65,24 +65,26 @@ def describe(items, show_methods=True, show_properties=True):
             if mapper is not None:
                 self.name = mapper.class_.__name__
                 self.columns = mapper.columns
-                self.methods = mapper.class_.__dict__.iteritems()
+                self.methods = mapper.class_.__dict__.items()
                 self.inherits = mapper.inherits
                 self.properties = mapper.iterate_properties
                 self.bases = mapper.class_.__bases__
                 self.class_ = mapper.class_
-                self.table_name = unicode(mapper.mapped_table)
+                self.table_name = str(mapper.mapped_table)
 
             elif table is not None:
                 self.name = table.name
                 self.table_name = table.name
                 # prepend schema if exists for foreign key matching
-                if hasattr(table, "schema"):
+                if hasattr(table, "schema") and table.schema:
                     self.table_name = table.schema + "." + self.table_name
                 self.columns = table.columns
             else:
                 pass
 
         def __eq__(self, other):
+            if isinstance(other, type(self)):
+                return self.table_name == other.table_name
             return self.name == other
 
     objects = []
@@ -90,16 +92,17 @@ def describe(items, show_methods=True, show_properties=True):
     inherits = []
 
     entries = []
-
     for item in items:
         try:
-            entries.append(EntryItem(mapper=class_mapper(item)))
+            mapper = class_mapper(item)
         except (exc.ArgumentError, orm.exc.UnmappedClassError):
-
             if isinstance(item, Table):
-                # Filter if table mapper already appended
-                if item.name not in [i.table_name for i in entries]:
-                    entries.append(EntryItem(table=item))
+                entity = EntryItem(table=item)
+        else:
+            entity = EntryItem(mapper=mapper)
+
+        if entity not in entries:
+            entries.append(entity)
 
     for entry in entries:
 

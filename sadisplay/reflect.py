@@ -36,7 +36,7 @@ def run():
     (options, args) = parser.parse_args()
 
     if not options.url:
-        print '-u/--url option required'
+        print('-u/--url option required')
         exit(1)
 
     engine = create_engine(options.url)
@@ -45,7 +45,7 @@ def run():
     meta.reflect(bind=engine)
 
     if options.list:
-        print 'Database tables:'
+        print('Database tables:')
         tables = sorted(meta.tables.keys())
 
         def _g(l, i):
@@ -55,9 +55,9 @@ def run():
                 return ''
 
         for i in xrange(0, len(tables), 2):
-            print '  %s' % _g(tables, i) \
+            print('  %s' % _g(tables, i) \
                 + ' ' * (38 - len(_g(tables, i))) \
-                + _g(tables, i + 1)
+                + _g(tables, i + 1))
 
         exit(0)
 
@@ -70,4 +70,4 @@ def run():
         tables -= set(map(string.strip, options.exclude.split(',')))
 
     desc = describe(map(lambda x: operator.getitem(meta.tables, x), tables))
-    print getattr(render, options.render)(desc)
+    print(getattr(render, options.render)(desc))
