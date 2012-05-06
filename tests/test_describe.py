@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-import unittest
 import sadisplay
 import model
 
 
-class TestDescribe(unittest.TestCase):
+class TestDescribe(object):
 
     def test_single_mapper(self):
 
@@ -105,7 +104,3 @@ class TestDescribe(unittest.TestCase):
                 'props': [],
                 'methods': [],
             }
-
-
-if __name__ == '__main__':
-    unittest.main()
