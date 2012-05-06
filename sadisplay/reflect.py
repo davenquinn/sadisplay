@@ -54,7 +54,7 @@ def run():
             except IndexError:
                 return ''
 
-        for i in xrange(0, len(tables), 2):
+        for i in range(0, len(tables), 2):
             print('  %s' % _g(tables, i) \
                 + ' ' * (38 - len(_g(tables, i))) \
                 + _g(tables, i + 1))
