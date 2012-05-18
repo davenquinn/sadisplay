@@ -98,6 +98,8 @@ def describe(items, show_methods=True, show_properties=True):
         except (exc.ArgumentError, orm.exc.UnmappedClassError):
             if isinstance(item, Table):
                 entity = EntryItem(table=item)
+            else:
+                continue
         else:
             entity = EntryItem(mapper=mapper)
 
