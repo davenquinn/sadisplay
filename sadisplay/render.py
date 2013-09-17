@@ -105,7 +105,7 @@ def dot(desc):
     INHERIT_TEMPLATE = "\t%(child)s -> %(parent)s \n"
 
     EDGE_REL = "\tedge [\n\t\tarrowhead = ediamond\n\t\tarrowtail = open\n\t]"
-    RELATION_TEMPLATE = "\t%(from)s -> %(to)s [label = \"%(by)s\"]"
+    RELATION_TEMPLATE = "\t\"%(from)s\" -> \"%(to)s\" [label = \"%(by)s\"]"
 
     result = ["""
         digraph G {
