@@ -4,7 +4,7 @@ import types
 from sqlalchemy import exc, orm
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, Table
-from sqlalchemy.orm.properties import PropertyLoader
+from sqlalchemy.orm.properties import ColumnProperty
 
 
 def describe(items, show_methods=True, show_properties=True):
@@ -141,10 +141,13 @@ def describe(items, show_methods=True, show_properties=True):
                         result_item['methods'].append(name)
 
         if show_properties and entry.properties:
-            for loader in entry.properties:
-                if isinstance(loader, PropertyLoader) \
-                        and loader.mapper.class_.__name__ in entries:
-                    result_item['props'].append(loader.key)
+            for item in entry.properties:
+                if not isinstance(item, ColumnProperty):
+                    result_item['props'].append(item.key)
+
+        # ordering
+        for key in ('methods', 'props'):
+            result_item[key].sort()
 
         objects.append(result_item)
 
