@@ -21,11 +21,23 @@ class User(BASE):
 
 
 class Admin(User):
-    __tablename__ = 'admin_table'
-    __mapper_args__ = {'polymorphic_identity': 'user_table'}
+    __mapper_args__ = {'polymorphic_identity': 'admin'}
 
-    id = Column(Integer, ForeignKey('user_table.id'), primary_key=True)
+    #id = Column(Integer, ForeignKey('user_table.id'), primary_key=True)
     phone = Column(Unicode(50))
+
+    def permissions(self):
+        pass
+
+    def __unicode__(self):
+        pass
+
+
+class Manager(User):
+    __mapper_args__ = {'polymorphic_identity': 'manager'}
+
+    #id = Column(Integer, ForeignKey('user_table.id'), primary_key=True)
+    deparment = Column(Unicode(50))
 
     def permissions(self):
         pass

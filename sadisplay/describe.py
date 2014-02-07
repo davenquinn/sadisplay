@@ -82,10 +82,13 @@ def describe(items, show_methods=True, show_properties=True):
             else:
                 pass
 
+        def __repr__(self):
+            return '<{s.__class__.__name__} {s.name}>'.format(s=self)
+
         def __eq__(self, other):
-            if isinstance(other, type(self)):
-                return self.table_name == other.table_name
-            return self.name == other
+            if other.inherits or self.inherits:
+                return self.name == other.name
+            return self.table_name == other.table_name
 
     objects = []
     relations = []
@@ -110,8 +113,9 @@ def describe(items, show_methods=True, show_properties=True):
 
         result_item = {
             'name': entry.name,
-            'cols': [(col.type.__class__.__name__, col.name)
-                            for col in entry.columns],
+            'cols': [
+                (c.type.__class__.__name__, c.name) for c in entry.columns
+            ],
             'props': [],
             'methods': [],
         }
@@ -129,8 +133,7 @@ def describe(items, show_methods=True, show_properties=True):
                     'dummy_id_col': Column(Integer, primary_key=True)
                 }
 
-                DummyClass = type('Dummy%s' % suffix,
-                        entry.bases, params)
+                DummyClass = type('Dummy%s' % suffix, entry.bases, params)
 
                 base_methods = DummyClass.__dict__.keys()
 
@@ -177,8 +180,7 @@ def describe(items, show_methods=True, show_properties=True):
 
             #Delete relation by inherits
             for i, rel in enumerate(relations):
-                if inh['child'] == rel['from'] and \
-                    inh['parent'] == rel['to']:
+                if inh['child'] == rel['from'] and inh['parent'] == rel['to']:
                     relations.pop(i)
 
     return objects, relations, inherits
