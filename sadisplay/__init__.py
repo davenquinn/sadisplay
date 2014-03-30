@@ -2,5 +2,5 @@
 
 __version__ = '0.3.8dev'
 
-from sadisplay.describe import describe     # pyflakes:ignore
-from sadisplay.render import plantuml, dot  # pyflakes:ignore
+from sadisplay.describe import describe     # flake8: noqa
+from sadisplay.render import plantuml, dot  # flake8: noqa

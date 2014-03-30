@@ -1,4 +1,11 @@
 syntax: glob
 
 *.pyc
-env/
+*~
+*egg*
+.tox
+dist/
+html_docs/
+docs/_build/
+build/
+*.csv

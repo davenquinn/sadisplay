@@ -28,20 +28,18 @@ def plantuml(desc):
 
     for cls in classes:
         renderd = CLASS_TEMPLATE % {
-                'name': cls['name'],
-                'cols': '\n'.join([
-                    COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]}
-                        for c in cls['cols']
-                ]),
-                'props': '\n'.join([
-                    PROPERTY_TEMPLATE % {'name': p}
-                        for p in cls['props']
-                ]),
-                'methods': '\n'.join([
-                    METHOD_TEMPLATE % {'name': m}
-                        for m in cls['methods']
-                ]),
-            }
+            'name': cls['name'],
+            'cols': '\n'.join([
+                COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]}
+                    for c in cls['cols']
+            ]),
+            'props': '\n'.join([
+                PROPERTY_TEMPLATE % {'name': p} for p in cls['props']
+            ]),
+            'methods': '\n'.join([
+                METHOD_TEMPLATE % {'name': m} for m in cls['methods']
+            ]),
+        }
 
         result.append(renderd)
 
@@ -126,21 +124,21 @@ def dot(desc):
     """ % __version__]
 
     for cls in classes:
+        cols = ' '.join([
+            COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]} for c in cls['cols']
+        ])
+        props = ' '.join([
+            PROPERTY_TEMPLATE % {'name': p} for p in cls['props']
+        ])
+        methods = ' '.join([
+            METHOD_TEMPLATE % {'name': m} for m in cls['methods']
+        ])
         renderd = CLASS_TEMPLATE % {
-                'name': cls['name'],
-                'cols': ' '.join([
-                    COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]}
-                        for c in cls['cols']
-                ]),
-                'props': ' '.join([
-                    PROPERTY_TEMPLATE % {'name': p}
-                        for p in cls['props']
-                ]),
-                'methods': ' '.join([
-                    METHOD_TEMPLATE % {'name': m}
-                        for m in cls['methods']
-                ]),
-            }
+            'name': cls['name'],
+            'cols': cols,
+            'props': props,
+            'methods': methods,
+        }
 
         result.append(renderd)
 

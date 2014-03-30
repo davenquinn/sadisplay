@@ -34,9 +34,11 @@ class TestDescribe(object):
             objects[0],
             {
                 'name': model.notes.name,
-                'cols': [('Integer', 'id'),
+                'cols': [
+                    ('Integer', 'id'),
                     ('Unicode', 'name'),
-                    ('Integer', 'user_id')],
+                    ('Integer', 'user_id')
+                ],
                 'props': [],
                 'methods': [],
             }
@@ -45,7 +47,7 @@ class TestDescribe(object):
     def test_inherits(self):
 
         objects, relations, inherits = sadisplay \
-                .describe([model.User, model.Admin, model.Manager])
+            .describe([model.User, model.Admin, model.Manager])
 
         assert len(relations) == 0
         assert len(objects) == 3
@@ -54,9 +56,11 @@ class TestDescribe(object):
             objects[1],
             {
                 'name': model.Admin.__name__,
-                'cols': [('Integer', 'id'),
+                'cols': [
+                    ('Integer', 'id'),
                     ('Unicode', 'name'),
-                    ('Unicode', 'phone'), ],
+                    ('Unicode', 'phone'),
+                ],
                 'props': ['address', 'books', ],
                 'methods': ['permissions', ],
             }
@@ -73,7 +77,7 @@ class TestDescribe(object):
     def test_relation(self):
 
         objects, relations, inherits = sadisplay \
-                .describe([model.User, model.Address])
+            .describe([model.User, model.Address])
 
         assert len(objects) == 2
         assert_equal(
@@ -99,49 +103,55 @@ class TestDescribe(object):
     def test_table(self):
 
         objects, relations, inherits = sadisplay \
-                .describe([model.Book])
+            .describe([model.Book])
 
         assert len(objects) == 1
         assert_equal(
             objects[0],
             {
                 'name': model.Book.__name__,
-                'cols': [('Integer', 'id'),
-                        ('Unicode', 'title'),
-                        ('Integer', 'user_id'), ],
+                'cols': [
+                    ('Integer', 'id'),
+                    ('Unicode', 'title'),
+                    ('Integer', 'user_id'),
+                ],
                 'props': ['user'],
                 'methods': [],
             }
         )
 
         objects, relations, inherits = sadisplay \
-                .describe([model.Book, model.books])
+            .describe([model.Book, model.books])
 
         assert len(objects) == 1
         assert_equal(
             objects[0],
             {
                 'name': model.Book.__name__,
-                'cols': [('Integer', 'id'),
-                        ('Unicode', 'title'),
-                        ('Integer', 'user_id'), ],
+                'cols': [
+                    ('Integer', 'id'),
+                    ('Unicode', 'title'),
+                    ('Integer', 'user_id'),
+                ],
                 'props': ['user'],
                 'methods': [],
             }
         )
 
         objects, relations, inherits = sadisplay \
-                .describe([model.books])
+            .describe([model.books])
 
         assert len(objects) == 1
         assert_equal(
             objects[0],
             {
                 'name': model.books.name,
-                'cols': [('Integer', 'id'),
-                        ('Unicode', 'title'),
-                        ('Integer', 'user_id'), ],
+                'cols': [
+                    ('Integer', 'id'),
+                    ('Unicode', 'title'),
+                    ('Integer', 'user_id'),
+                ],
                 'props': [],
                 'methods': [],
             }
-        ) 
+        )

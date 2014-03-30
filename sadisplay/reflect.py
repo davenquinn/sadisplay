@@ -14,24 +14,35 @@ from sadisplay import describe, render, __version__
 
 def run():
     """Command for reflection database objects"""
-    parser = OptionParser(version=__version__,
-        description=__doc__)
+    parser = OptionParser(
+        version=__version__, description=__doc__,
+    )
 
-    parser.add_option('-u', '--url', dest='url',
-                    help='Database URL (connection string)')
+    parser.add_option(
+        '-u', '--url', dest='url',
+        help='Database URL (connection string)',
+    )
 
-    parser.add_option('-r', '--render', dest='render', default='dot',
-                    choices=['plantuml', 'dot'],
-                    help='Output format - plantuml or dot')
+    parser.add_option(
+        '-r', '--render', dest='render', default='dot',
+        choices=['plantuml', 'dot'],
+        help='Output format - plantuml or dot',
+    )
 
-    parser.add_option('-l', '--list', dest='list', action='store_true',
-                    help='Output database list of tables and exit')
+    parser.add_option(
+        '-l', '--list', dest='list', action='store_true',
+        help='Output database list of tables and exit',
+    )
 
-    parser.add_option('-i', '--include', dest='include',
-                    help='List of tables to include through ","')
+    parser.add_option(
+        '-i', '--include', dest='include',
+        help='List of tables to include through ","',
+    )
 
-    parser.add_option('-e', '--exclude', dest='exclude',
-                    help='List of tables to exlude through ","')
+    parser.add_option(
+        '-e', '--exclude', dest='exclude',
+        help='List of tables to exlude through ","',
+    )
 
     (options, args) = parser.parse_args()
 
@@ -55,9 +66,11 @@ def run():
                 return ''
 
         for i in range(0, len(tables), 2):
-            print('  %s' % _g(tables, i) \
-                + ' ' * (38 - len(_g(tables, i))) \
-                + _g(tables, i + 1))
+            print(' {0}{1}{2}'.format(
+                _g(tables, i),
+                ' ' * (38 - len(_g(tables, i))),
+                _g(tables, i + 1),
+            ))
 
         exit(0)
 

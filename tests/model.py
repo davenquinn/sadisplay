@@ -23,7 +23,6 @@ class User(BASE):
 class Admin(User):
     __mapper_args__ = {'polymorphic_identity': 'admin'}
 
-    #id = Column(Integer, ForeignKey('user_table.id'), primary_key=True)
     phone = Column(Unicode(50))
 
     def permissions(self):
@@ -36,7 +35,6 @@ class Admin(User):
 class Manager(User):
     __mapper_args__ = {'polymorphic_identity': 'manager'}
 
-    #id = Column(Integer, ForeignKey('user_table.id'), primary_key=True)
     deparment = Column(Unicode(50))
 
     def permissions(self):
@@ -54,7 +52,9 @@ class Address(BASE):
     user = relation(User, backref="address")
 
 
-books = Table('books', BASE.metadata,
+books = Table(
+    'books',
+    BASE.metadata,
     Column('id', Integer, primary_key=True),
     Column('title', Unicode(200), nullable=False),
     Column('user_id', Integer, ForeignKey('user_table.id')),
@@ -69,7 +69,9 @@ mapper(Book, books, {'user': relation(User, backref='books')})
 
 
 # Not mapped table
-notes = Table('notes', BASE.metadata,
+notes = Table(
+    'notes',
+    BASE.metadata,
     Column('id', Integer, primary_key=True),
     Column('name', Unicode(200), nullable=False),
     Column('user_id', Integer, ForeignKey('user_table.id')),

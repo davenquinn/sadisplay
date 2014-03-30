@@ -178,7 +178,7 @@ def describe(items, show_methods=True, show_properties=True):
 
             inherits.append(inh)
 
-            #Delete relation by inherits
+            # Delete relation by inherits
             for i, rel in enumerate(relations):
                 if inh['child'] == rel['from'] and inh['parent'] == rel['to']:
                     relations.pop(i)
