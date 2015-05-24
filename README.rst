@@ -40,6 +40,12 @@ From bitbucket::
 Usage
 =====
 
+SQLAlchemy model:
+
+.. include:: examples/e01.py
+    :literal:
+
+
 Write simple script in your project environment::
 
     import sadisplay
@@ -47,11 +53,12 @@ Write simple script in your project environment::
 
     desc = sadisplay.describe([getattr(model, attr) for attr in dir(model)])
     open('schema.plantuml', 'w').write(sadisplay.plantuml(desc))
+    open('schema.dot', 'w').write(sadisplay.dot(desc))
 
     # Or only part of schema
     desc = sadisplay.describe([model.User, model.Group, model.Persmission])
     open('auth.plantuml', 'w').write(sadisplay.plantuml(desc))
-
+    open('auth.dot', 'w').write(sadisplay.dot(desc))
 
 
 Render PlantUML class diagram::
@@ -60,6 +67,11 @@ Render PlantUML class diagram::
 
     # or for svg format
     $ java -jar plantuml.jar -Tsvg schema.plantuml
+
+
+Render graph by graphviz::
+
+    $ dot -Tpng schema.dot > schema.png
 
 
 Also you can display you sql database tables by reflecting feature::
