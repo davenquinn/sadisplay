@@ -90,6 +90,24 @@ def describe(items, show_methods=True, show_properties=True):
                 return self.name == other.name
             return self.table_name == other.table_name
 
+    def format_column(column):
+        column_name = column.name
+        column_type = str(column.type)
+
+        type_char = u'\U000026AA'
+        if column.primary_key:
+            type_char = u'\U00002605'
+        elif column.foreign_keys:
+            type_char = u'\U00002606'
+
+        return (column_type, '%s %s' % (type_char, column_name))
+
+    def format_property(property):
+        property_name = property.key
+        type_char = u'\U000026AA'
+
+        return '%s %s' % (type_char, property_name)
+
     objects = []
     relations = []
     inherits = []
@@ -114,7 +132,7 @@ def describe(items, show_methods=True, show_properties=True):
         result_item = {
             'name': entry.name,
             'cols': [
-                (c.type.__class__.__name__, c.name) for c in entry.columns
+                format_column(c) for c in entry.columns
             ],
             'props': [],
             'methods': [],
@@ -146,7 +164,7 @@ def describe(items, show_methods=True, show_properties=True):
         if show_properties and entry.properties:
             for item in entry.properties:
                 if not isinstance(item, ColumnProperty):
-                    result_item['props'].append(item.key)
+                    result_item['props'].append(format_property(item))
 
         # ordering
         for key in ('methods', 'props'):
