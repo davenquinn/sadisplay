@@ -56,7 +56,7 @@ books = Table(
     'books',
     BASE.metadata,
     Column('id', Integer, primary_key=True),
-    Column('title', Unicode(200), nullable=False),
+    Column('title', Unicode(50), nullable=False),
     Column('user_id', Integer, ForeignKey('user_table.id')),
 )
 
@@ -73,6 +73,6 @@ notes = Table(
     'notes',
     BASE.metadata,
     Column('id', Integer, primary_key=True),
-    Column('name', Unicode(200), nullable=False),
+    Column('name', Unicode(50), nullable=False),
     Column('user_id', Integer, ForeignKey('user_table.id')),
 )

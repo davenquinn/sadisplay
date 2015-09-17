@@ -66,3 +66,15 @@ notes = Table(
     Column('name', Unicode(200), nullable=False),
     Column('user_id', Integer, ForeignKey('user_table.id')),
 )
+
+
+if __name__ == '__main__':
+    import sadisplay
+
+    desc = sadisplay.describe(globals().values())
+
+    with open('schema.plantuml', 'w') as f:
+        f.write(sadisplay.plantuml(desc))
+
+    with open('schema.dot', 'w') as f:
+        f.write(sadisplay.dot(desc))

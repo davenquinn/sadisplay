@@ -22,7 +22,10 @@ def describe(items, show_methods=True, show_properties=True):
         [{
             'name': '<Mapper class name or table name>',
             'cols': [
-                ('<Column type class name>', '<Column name>'),
+                (
+                    '<Column type class name>',
+                    '<Column name>',
+                    '<pk|fk>',),
                 ...
             ],
             'props': ['<Property name>'],
@@ -50,6 +53,12 @@ def describe(items, show_methods=True, show_properties=True):
 
         desc = sadisplay.describe([models.User, models.Group])
     """
+
+    def column_role(column):
+        if column.primary_key:
+            return 'pk'
+        elif column.foreign_keys:
+            return 'fk'
 
     class EntryItem(object):
         """Class adaptor for mapped classes and tables"""
@@ -90,24 +99,6 @@ def describe(items, show_methods=True, show_properties=True):
                 return self.name == other.name
             return self.table_name == other.table_name
 
-    def format_column(column):
-        column_name = column.name
-        column_type = str(column.type)
-
-        type_char = u'\U000026AA'
-        if column.primary_key:
-            type_char = u'\U00002605'
-        elif column.foreign_keys:
-            type_char = u'\U00002606'
-
-        return (column_type, '%s %s' % (type_char, column_name))
-
-    def format_property(property):
-        property_name = property.key
-        type_char = u'\U000026AA'
-
-        return '%s %s' % (type_char, property_name)
-
     objects = []
     relations = []
     inherits = []
@@ -132,7 +123,11 @@ def describe(items, show_methods=True, show_properties=True):
         result_item = {
             'name': entry.name,
             'cols': [
-                format_column(c) for c in entry.columns
+                (
+                    str(c.type),
+                    c.name,
+                    column_role(c),
+                ) for c in entry.columns
             ],
             'props': [],
             'methods': [],
@@ -164,7 +159,7 @@ def describe(items, show_methods=True, show_properties=True):
         if show_properties and entry.properties:
             for item in entry.properties:
                 if not isinstance(item, ColumnProperty):
-                    result_item['props'].append(format_property(item))
+                    result_item['props'].append(item.key)
 
         # ordering
         for key in ('methods', 'props'):

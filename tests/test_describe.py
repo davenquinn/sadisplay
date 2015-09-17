@@ -17,7 +17,10 @@ class TestDescribe(object):
             objects[0],
             {
                 'name': model.User.__name__,
-                'cols': [('Integer', 'id'), ('Unicode', 'name'), ],
+                'cols': [
+                    ('INTEGER', 'id', 'pk'),
+                    ('VARCHAR(50)', 'name', None),
+                ],
                 'props': ['address', 'books', ],
                 'methods': ['login', ],
             }
@@ -35,9 +38,9 @@ class TestDescribe(object):
             {
                 'name': model.notes.name,
                 'cols': [
-                    ('Integer', 'id'),
-                    ('Unicode', 'name'),
-                    ('Integer', 'user_id')
+                    ('INTEGER', 'id', 'pk'),
+                    ('VARCHAR(50)', 'name', None),
+                    ('INTEGER', 'user_id', 'fk')
                 ],
                 'props': [],
                 'methods': [],
@@ -57,9 +60,9 @@ class TestDescribe(object):
             {
                 'name': model.Admin.__name__,
                 'cols': [
-                    ('Integer', 'id'),
-                    ('Unicode', 'name'),
-                    ('Unicode', 'phone'),
+                    ('INTEGER', 'id', 'pk'),
+                    ('VARCHAR(50)', 'name', None),
+                    ('VARCHAR(50)', 'phone', None),
                 ],
                 'props': ['address', 'books', ],
                 'methods': ['permissions', ],
@@ -84,7 +87,10 @@ class TestDescribe(object):
             objects[1],
             {
                 'name': model.Address.__name__,
-                'cols': [('Integer', 'id'), ('Integer', 'user_id'), ],
+                'cols': [
+                    ('INTEGER', 'id', 'pk'),
+                    ('INTEGER', 'user_id', 'fk'),
+                ],
                 'props': ['user'],
                 'methods': [],
             }
@@ -111,9 +117,9 @@ class TestDescribe(object):
             {
                 'name': model.Book.__name__,
                 'cols': [
-                    ('Integer', 'id'),
-                    ('Unicode', 'title'),
-                    ('Integer', 'user_id'),
+                    ('INTEGER', 'id', 'pk'),
+                    ('VARCHAR(50)', 'title', None),
+                    ('INTEGER', 'user_id', 'fk'),
                 ],
                 'props': ['user'],
                 'methods': [],
@@ -129,9 +135,9 @@ class TestDescribe(object):
             {
                 'name': model.Book.__name__,
                 'cols': [
-                    ('Integer', 'id'),
-                    ('Unicode', 'title'),
-                    ('Integer', 'user_id'),
+                    ('INTEGER', 'id', 'pk'),
+                    ('VARCHAR(50)', 'title', None),
+                    ('INTEGER', 'user_id', 'fk'),
                 ],
                 'props': ['user'],
                 'methods': [],
@@ -147,9 +153,9 @@ class TestDescribe(object):
             {
                 'name': model.books.name,
                 'cols': [
-                    ('Integer', 'id'),
-                    ('Unicode', 'title'),
-                    ('Integer', 'user_id'),
+                    ('INTEGER', 'id', 'pk'),
+                    ('VARCHAR(50)', 'title', None),
+                    ('INTEGER', 'user_id', 'fk'),
                 ],
                 'props': [],
                 'methods': [],

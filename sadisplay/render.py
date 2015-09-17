@@ -2,6 +2,24 @@
 from sadisplay import __version__
 
 
+# by pull request
+# https://bitbucket.org/estin/sadisplay/pull-requests/4/format-table-info/diff
+def format_column(column):
+    type, name, role = column
+    role_char = {
+        'pk': u'\U00002605',
+        'fk': u'\U00002606',
+    }.get(role, u'\U000026AA')
+
+    return type, '%s %s' % (role_char, name)
+
+
+def format_property(property_name):
+    type_char = u'\U000026AA'
+
+    return '%s %s' % (type_char, property_name)
+
+
 def tabular_output(table, indent=None, col_delimiter=None):
     indent = indent or ' ' * 4
     col_delimiter = col_delimiter or ' '
@@ -27,6 +45,10 @@ def plantuml(desc):
         'skinparam defaultFontName Courier',
     ]
 
+    def _cleanup(col):
+        type, name = col
+        return type.replace('(', '[').replace(')', ']'), name
+
     for cls in classes:
         # issue #11 - tabular output of class members (attrs)
         # http://stackoverflow.com/a/8356620/258194
@@ -34,7 +56,9 @@ def plantuml(desc):
         # build table
         class_desc = []
         # table columns
-        class_desc += [(i[1], i[0]) for i in cls['cols']]
+        class_desc += [
+            _cleanup(format_column(i)) for i in cls['cols']
+        ]
         # class properties
         class_desc += [('+', i) for i in cls['props']]
         # methods
@@ -129,10 +153,12 @@ def dot(desc):
 
     for cls in classes:
         cols = ' '.join([
-            COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]} for c in cls['cols']
+            COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]}
+            for c in map(format_column, cls['cols'])
         ])
         props = ' '.join([
-            PROPERTY_TEMPLATE % {'name': p} for p in cls['props']
+            PROPERTY_TEMPLATE % {'name': format_property(p)}
+            for p in cls['props']
         ])
         methods = ' '.join([
             METHOD_TEMPLATE % {'name': m} for m in cls['methods']
