@@ -8,6 +8,7 @@ from sqlalchemy import exc, orm
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, Table
 from sqlalchemy.orm.properties import ColumnProperty
+from sqlalchemy.sql.schema import Index
 
 try:
     # sa >= 0.9
@@ -16,12 +17,13 @@ except ImportError:
     from sqlalchemy.sql.expression import Label
 
 
-def describe(items, show_methods=True, show_properties=True):
+def describe(items, show_methods=True, show_properties=True, show_indexes=True):
     """Detecting attributes, inherits and relations
 
     :param items: list of objects to describe
     :param show_methods: do detection of methods
     :param show_properties: do detection of properties
+    :param show_indexes: do detection of indexes
 
     Return tuple (objects, relations, inherits)
 
@@ -84,6 +86,7 @@ def describe(items, show_methods=True, show_properties=True):
         name = None
         methods = []
         columns = []
+        indexes = []
         inherits = None
         properties = []
         bases = tuple()
@@ -93,6 +96,7 @@ def describe(items, show_methods=True, show_properties=True):
             if mapper is not None:
                 self.name = mapper.class_.__name__
                 self.columns = mapper.columns
+                self.indexes = mapper.mapped_table.indexes
                 self.methods = mapper.class_.__dict__.items()
                 self.inherits = mapper.inherits
                 self.properties = mapper.iterate_properties
@@ -149,6 +153,7 @@ def describe(items, show_methods=True, show_properties=True):
                 ) for name, col in entry.columns.items()
                 if not isinstance(col, Label)
             ],
+            'indexes': [],
             'props': [],
             'methods': [],
         }
@@ -181,6 +186,13 @@ def describe(items, show_methods=True, show_properties=True):
                     if isinstance(func, types.FunctionType):
                         result_item['methods'].append(name)
 
+        if show_indexes:
+
+            # find indexes
+            for index in entry.indexes:
+                if isinstance(index, Index) and len(index.columns) > 1:
+                    result_item['indexes'].append(index)
+
         if show_properties:
 
             # find relationship properties
@@ -194,7 +206,7 @@ def describe(items, show_methods=True, show_properties=True):
                     result_item['props'].append(name)
 
         # ordering
-        for key in ('methods', 'props'):
+        for key in ('indexes', 'methods', 'props'):
             result_item[key].sort()
 
         objects.append(result_item)

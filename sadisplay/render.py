@@ -14,6 +14,13 @@ def format_column(column):
     return type, '%s %s' % (role_char, name)
 
 
+def format_index(index):
+    index_name = index.name
+    type_char = u'\U00002606'
+
+    return '%s %s' % (type_char, index_name)
+
+
 def format_property(property_name):
     type_char = u'\U000026AA'
 
@@ -59,6 +66,8 @@ def plantuml(desc):
         class_desc += [
             _cleanup(format_column(i)) for i in cls['cols']
         ]
+        # class indexes
+        class_desc += [('%', i) for i in cls['indexes']]
         # class properties
         class_desc += [('+', i) for i in cls['props']]
         # methods
@@ -102,7 +111,7 @@ def dot(desc):
                 <TR><TD COLSPAN="2" CELLPADDING="4"
                         ALIGN="CENTER" BGCOLOR="palegoldenrod"
                 ><FONT FACE="Helvetica Bold" COLOR="black"
-                >%(name)s</FONT></TD></TR>%(cols)s%(props)s%(methods)s
+                >%(name)s</FONT></TD></TR>%(cols)s%(indexes)s%(props)s%(methods)s
         </TABLE>
     >]
     """
@@ -111,6 +120,13 @@ def dot(desc):
         ><FONT FACE="Bitstream Vera Sans">%(name)s</FONT
         ></TD><TD ALIGN="LEFT"
         ><FONT FACE="Bitstream Vera Sans">%(type)s</FONT
+        ></TD></TR>"""
+
+    INDEX_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
+        BGCOLOR="palegoldenrod"
+        ><FONT FACE="Bitstream Vera Sans">%(name)s</FONT></TD
+        ><TD BGCOLOR="palegoldenrod" ALIGN="LEFT"
+        ><FONT FACE="Bitstream Vera Sans">INDEX</FONT
         ></TD></TR>"""
 
     PROPERTY_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
@@ -156,6 +172,10 @@ def dot(desc):
             COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]}
             for c in map(format_column, cls['cols'])
         ])
+        indexes = ' '.join([
+            INDEX_TEMPLATE % {'name': format_index(i)}
+            for i in cls['indexes']
+        ])
         props = ' '.join([
             PROPERTY_TEMPLATE % {'name': format_property(p)}
             for p in cls['props']
@@ -166,6 +186,7 @@ def dot(desc):
         renderd = CLASS_TEMPLATE % {
             'name': cls['name'],
             'cols': cols,
+            'indexes': indexes,
             'props': props,
             'methods': methods,
         }
