@@ -124,10 +124,10 @@ def describe(items, show_methods=True, show_properties=True):
             'name': entry.name,
             'cols': [
                 (
-                    str(c.type),
-                    c.name,
-                    column_role(c),
-                ) for c in entry.columns
+                    str(col.type),
+                    name,
+                    column_role(col),
+                ) for name, col in entry.columns.items()
             ],
             'props': [],
             'methods': [],

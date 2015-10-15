@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import Table, Column, Integer, Unicode, ForeignKey
+from sqlalchemy.schema import ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relation, mapper
+from sqlalchemy.orm import column_property, relation, mapper
+from sqlalchemy.sql import select
 
 
 BASE = declarative_base()
@@ -35,13 +37,22 @@ class Admin(User):
 class Manager(User):
     __mapper_args__ = {'polymorphic_identity': 'manager'}
 
-    deparment = Column(Unicode(50))
+    department = Column(Unicode(50))
 
     def permissions(self):
         pass
 
     def __unicode__(self):
         pass
+
+
+class Employee(User):
+    __mapper_args__ = {'polymorphic_identity': 'employee'}
+
+    manager_id = Column(Integer, ForeignKey(Manager.id))
+
+    department = column_property(
+            select([Manager.department]).where(Manager.id==manager_id))
 
 
 class Address(BASE):

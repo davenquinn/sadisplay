@@ -161,3 +161,25 @@ class TestDescribe(object):
                 'methods': [],
             }
         )
+
+
+    def test_column_property(self):
+
+        objects, relations, inherits = sadisplay\
+            .describe([model.Employee])
+
+        from pprint import pprint
+        assert_equal(len(objects), 1)
+        assert_equal(
+            objects[0],
+            {
+                'name': model.Employee.__name__,
+                'cols': [
+                    ('VARCHAR(50)', 'department', None),
+                    ('INTEGER', 'id', 'pk'),
+                    ('VARCHAR(50)', 'name', None),
+                    ('INTEGER', 'manager_id', 'fk')
+                ],
+                'props': ['address', 'books'],
+                'methods': []
+            })
