@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import Table, Column, Integer, Unicode, ForeignKey
-from sqlalchemy.schema import ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import column_property, relation, mapper
 from sqlalchemy.sql import select
@@ -51,8 +50,13 @@ class Employee(User):
 
     manager_id = Column(Integer, ForeignKey(Manager.id))
 
+    # real column
+    rank = column_property(Column(Unicode(50)), active_history=True)
+
+    # sql expression label
     department = column_property(
-            select([Manager.department]).where(Manager.id==manager_id))
+        select([Manager.department]).where(Manager.id == manager_id)
+    )
 
 
 class Address(BASE):

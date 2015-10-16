@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
 import uuid
 import types
+import locale
+from functools import cmp_to_key
+
 from sqlalchemy import exc, orm
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, Table
 from sqlalchemy.orm.properties import ColumnProperty
+
+try:
+    # sa >= 0.9
+    from sqlalchemy.sql.elements import Label
+except ImportError:
+    from sqlalchemy.sql.expression import Label
 
 
 def describe(items, show_methods=True, show_properties=True):
@@ -59,6 +68,13 @@ def describe(items, show_methods=True, show_properties=True):
             return 'pk'
         elif column.foreign_keys:
             return 'fk'
+
+    def column_compare(a, b):
+        if a[2] != 'pk' and b[2] == 'pk':
+            return 1
+        if a[2] == 'pk' and b[2] != 'pk':
+            return -1
+        return locale.strcoll(a[1], b[1])
 
     class EntryItem(object):
         """Class adaptor for mapped classes and tables"""
@@ -128,10 +144,16 @@ def describe(items, show_methods=True, show_properties=True):
                     name,
                     column_role(col),
                 ) for name, col in entry.columns.items()
+                if not isinstance(col, Label)
             ],
             'props': [],
             'methods': [],
         }
+
+        # sort columns by role and name
+        result_item['cols'].sort(
+            key=cmp_to_key(column_compare),
+        )
 
         if show_methods and entry.methods:
 
@@ -156,10 +178,17 @@ def describe(items, show_methods=True, show_properties=True):
                     if isinstance(func, types.FunctionType):
                         result_item['methods'].append(name)
 
-        if show_properties and entry.properties:
+        if show_properties:
+
+            # find relationship properties
             for item in entry.properties:
                 if not isinstance(item, ColumnProperty):
                     result_item['props'].append(item.key)
+
+            # find column_property() as sql expressions
+            for name, item in entry.columns.items():
+                if isinstance(item, Label):
+                    result_item['props'].append(name)
 
         # ordering
         for key in ('methods', 'props'):
