@@ -70,11 +70,14 @@ def describe(items, show_methods=True, show_properties=True):
             return 'fk'
 
     def column_compare(a, b):
-        if a[2] != 'pk' and b[2] == 'pk':
-            return 1
-        if a[2] == 'pk' and b[2] != 'pk':
-            return -1
-        return locale.strcoll(a[1], b[1])
+        prefix = {
+            'pk': '0',
+            'fk': '1',
+        }
+        return locale.strcoll(
+            prefix.get(a[2], '2') + a[1],
+            prefix.get(b[2], '2') + b[1],
+        )
 
     class EntryItem(object):
         """Class adaptor for mapped classes and tables"""

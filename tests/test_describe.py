@@ -29,18 +29,18 @@ class TestDescribe(object):
     def test_single_table(self):
 
         objects, relations, inherits = sadisplay.describe([model.notes])
-
         assert len(objects) == 1
         assert relations == []
         assert inherits == []
+
         assert_equal(
             objects[0],
             {
                 'name': model.notes.name,
                 'cols': [
                     ('INTEGER', 'id', 'pk'),
+                    ('INTEGER', 'user_id', 'fk'),
                     ('VARCHAR(50)', 'name', None),
-                    ('INTEGER', 'user_id', 'fk')
                 ],
                 'props': [],
                 'methods': [],
@@ -118,8 +118,8 @@ class TestDescribe(object):
                 'name': model.Book.__name__,
                 'cols': [
                     ('INTEGER', 'id', 'pk'),
-                    ('VARCHAR(50)', 'title', None),
                     ('INTEGER', 'user_id', 'fk'),
+                    ('VARCHAR(50)', 'title', None),
                 ],
                 'props': ['user'],
                 'methods': [],
@@ -136,8 +136,8 @@ class TestDescribe(object):
                 'name': model.Book.__name__,
                 'cols': [
                     ('INTEGER', 'id', 'pk'),
-                    ('VARCHAR(50)', 'title', None),
                     ('INTEGER', 'user_id', 'fk'),
+                    ('VARCHAR(50)', 'title', None),
                 ],
                 'props': ['user'],
                 'methods': [],
@@ -154,8 +154,8 @@ class TestDescribe(object):
                 'name': model.books.name,
                 'cols': [
                     ('INTEGER', 'id', 'pk'),
-                    ('VARCHAR(50)', 'title', None),
                     ('INTEGER', 'user_id', 'fk'),
+                    ('VARCHAR(50)', 'title', None),
                 ],
                 'props': [],
                 'methods': [],
