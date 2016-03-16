@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy import Table, Column, Integer, Unicode, ForeignKey
+from sqlalchemy import Table, Column, Integer, Unicode, ForeignKey, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relation, mapper
 
@@ -49,6 +49,9 @@ books = Table(
     Column('title', Unicode(200), nullable=False),
     Column('user_id', Integer, ForeignKey('user_table.id')),
 )
+
+
+Index("ix_user_title", books.c.user_id, books.c.title)
 
 
 class Book(object):

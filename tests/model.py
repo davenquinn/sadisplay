@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy import Table, Column, Integer, Unicode, ForeignKey
+from sqlalchemy import Table, Column, Integer, Unicode, ForeignKey, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import column_property, relation, mapper
 from sqlalchemy.sql import select
@@ -12,7 +12,7 @@ class User(BASE):
     __tablename__ = 'user_table'
 
     id = Column(Integer, primary_key=True)
-    name = Column(Unicode(50))
+    name = Column(Unicode(50), unique=True)
 
     def login(self):
         pass
@@ -45,6 +45,9 @@ class Manager(User):
         pass
 
 
+Index('ix_username_department', User.name, Manager.department)
+
+
 class Employee(User):
     __mapper_args__ = {'polymorphic_identity': 'employee'}
 
@@ -71,7 +74,7 @@ books = Table(
     'books',
     BASE.metadata,
     Column('id', Integer, primary_key=True),
-    Column('title', Unicode(50), nullable=False),
+    Column('title', Unicode(50), nullable=False, index=True),
     Column('user_id', Integer, ForeignKey('user_table.id')),
 )
 

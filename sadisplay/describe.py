@@ -6,9 +6,8 @@ from functools import cmp_to_key
 
 from sqlalchemy import exc, orm
 from sqlalchemy.orm import class_mapper
-from sqlalchemy import Column, Integer, Table
+from sqlalchemy import Column, Integer, Table, Index
 from sqlalchemy.orm.properties import ColumnProperty
-from sqlalchemy.sql.schema import Index
 
 try:
     # sa >= 0.9
@@ -17,7 +16,8 @@ except ImportError:
     from sqlalchemy.sql.expression import Label
 
 
-def describe(items, show_methods=True, show_properties=True, show_indexes=True):
+def describe(
+        items, show_methods=True, show_properties=True, show_indexes=True):
     """Detecting attributes, inherits and relations
 
     :param items: list of objects to describe
@@ -41,6 +41,10 @@ def describe(items, show_methods=True, show_properties=True, show_indexes=True):
             ],
             'props': ['<Property name>'],
             'methods': ['<Method name>', ...],
+            'indexes': [{
+                'name': '<index name>',
+                'cols': ['<col name 1>', ...],
+            }, ...],
         }, ...]
 
 
@@ -96,7 +100,8 @@ def describe(items, show_methods=True, show_properties=True, show_indexes=True):
             if mapper is not None:
                 self.name = mapper.class_.__name__
                 self.columns = mapper.columns
-                self.indexes = mapper.mapped_table.indexes
+                if isinstance(mapper.mapped_table, Table):
+                    self.indexes = mapper.mapped_table.indexes
                 self.methods = mapper.class_.__dict__.items()
                 self.inherits = mapper.inherits
                 self.properties = mapper.iterate_properties
@@ -111,6 +116,7 @@ def describe(items, show_methods=True, show_properties=True, show_indexes=True):
                 if hasattr(table, "schema") and table.schema:
                     self.table_name = table.schema + "." + self.table_name
                 self.columns = table.columns
+                self.indexes = table.indexes
             else:
                 pass
 
@@ -188,10 +194,16 @@ def describe(items, show_methods=True, show_properties=True, show_indexes=True):
 
         if show_indexes:
 
-            # find indexes
-            for index in entry.indexes:
-                if isinstance(index, Index) and len(index.columns) > 1:
-                    result_item['indexes'].append(index)
+            result_item['indexes'] = [
+                {
+                    'name': index.name,
+                    'cols': [
+                        c.name for c in index.columns
+                        if isinstance(c, Column)
+                    ],
+                } for index in entry.indexes
+                if isinstance(index, Index)
+            ]
 
         if show_properties:
 

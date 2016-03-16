@@ -21,6 +21,10 @@ class TestDescribe(object):
                     ('INTEGER', 'id', 'pk'),
                     ('VARCHAR(50)', 'name', None),
                 ],
+                'indexes': [{
+                    'cols': ['name', 'department'],
+                    'name': 'ix_username_department',
+                }],
                 'props': ['address', 'books', ],
                 'methods': ['login', ],
             }
@@ -42,6 +46,7 @@ class TestDescribe(object):
                     ('INTEGER', 'user_id', 'fk'),
                     ('VARCHAR(50)', 'name', None),
                 ],
+                'indexes': [],
                 'props': [],
                 'methods': [],
             }
@@ -64,6 +69,10 @@ class TestDescribe(object):
                     ('VARCHAR(50)', 'name', None),
                     ('VARCHAR(50)', 'phone', None),
                 ],
+                'indexes': [{
+                    'cols': ['name', 'department'],
+                    'name': 'ix_username_department',
+                }],
                 'props': ['address', 'books', ],
                 'methods': ['permissions', ],
             }
@@ -91,6 +100,7 @@ class TestDescribe(object):
                     ('INTEGER', 'id', 'pk'),
                     ('INTEGER', 'user_id', 'fk'),
                 ],
+                'indexes': [],
                 'props': ['user'],
                 'methods': [],
             }
@@ -121,6 +131,10 @@ class TestDescribe(object):
                     ('INTEGER', 'user_id', 'fk'),
                     ('VARCHAR(50)', 'title', None),
                 ],
+                'indexes': [{
+                    'cols': ['title'],
+                    'name': 'ix_books_title',
+                }],
                 'props': ['user'],
                 'methods': [],
             }
@@ -139,6 +153,10 @@ class TestDescribe(object):
                     ('INTEGER', 'user_id', 'fk'),
                     ('VARCHAR(50)', 'title', None),
                 ],
+                'indexes': [{
+                    'cols': ['title'],
+                    'name': 'ix_books_title',
+                }],
                 'props': ['user'],
                 'methods': [],
             }
@@ -157,6 +175,10 @@ class TestDescribe(object):
                     ('INTEGER', 'user_id', 'fk'),
                     ('VARCHAR(50)', 'title', None),
                 ],
+                'indexes': [{
+                    'cols': ['title'],
+                    'name': 'ix_books_title',
+                }],
                 'props': [],
                 'methods': [],
             }
@@ -178,6 +200,10 @@ class TestDescribe(object):
                     ('VARCHAR(50)', 'name', None),
                     ('VARCHAR(50)', 'rank', None),
                 ],
+                'indexes': [{
+                    'cols': ['name', 'department'],
+                    'name': 'ix_username_department',
+                }],
                 'props': ['address', 'books', 'department'],
                 'methods': [],
             })

@@ -51,7 +51,12 @@ Write simple script in your project environment::
     import sadisplay
     from yourapp import model
 
-    desc = sadisplay.describe([getattr(model, attr) for attr in dir(model)])
+    desc = sadisplay.describe(
+        [getattr(model, attr) for attr in dir(model)],
+        show_methods=True,
+        show_properties=True,
+        show_indexes=True,
+    )
     open('schema.plantuml', 'w').write(sadisplay.plantuml(desc))
     open('schema.dot', 'w').write(sadisplay.dot(desc))
 

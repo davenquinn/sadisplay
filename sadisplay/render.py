@@ -14,9 +14,8 @@ def format_column(column):
     return type, '%s %s' % (role_char, name)
 
 
-def format_index(index):
-    index_name = index.name
-    type_char = u'\U00002606'
+def format_index(index_name):
+    type_char = u'\U000026B7'
 
     return '%s %s' % (type_char, index_name)
 
@@ -66,12 +65,15 @@ def plantuml(desc):
         class_desc += [
             _cleanup(format_column(i)) for i in cls['cols']
         ]
-        # class indexes
-        class_desc += [('%', i) for i in cls['indexes']]
         # class properties
         class_desc += [('+', i) for i in cls['props']]
         # methods
         class_desc += [('%s()' % i, '') for i in cls['methods']]
+        # class indexes
+        class_desc += [
+            ('INDEX:%s' % ','.join(i['cols']), format_index(i['name']))
+            for i in cls['indexes']
+        ]
 
         result.append(
             'Class %(name)s {\n%(desc)s\n}' % {
@@ -111,7 +113,7 @@ def dot(desc):
                 <TR><TD COLSPAN="2" CELLPADDING="4"
                         ALIGN="CENTER" BGCOLOR="palegoldenrod"
                 ><FONT FACE="Helvetica Bold" COLOR="black"
-                >%(name)s</FONT></TD></TR>%(cols)s%(indexes)s%(props)s%(methods)s
+                >%(name)s</FONT></TD></TR>%(cols)s%(props)s%(methods)s%(indexes)s
         </TABLE>
     >]
     """
@@ -126,7 +128,7 @@ def dot(desc):
         BGCOLOR="palegoldenrod"
         ><FONT FACE="Bitstream Vera Sans">%(name)s</FONT></TD
         ><TD BGCOLOR="palegoldenrod" ALIGN="LEFT"
-        ><FONT FACE="Bitstream Vera Sans">INDEX</FONT
+        ><FONT FACE="Bitstream Vera Sans">INDEX:%(cols)s</FONT
         ></TD></TR>"""
 
     PROPERTY_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
@@ -172,16 +174,18 @@ def dot(desc):
             COLUMN_TEMPLATE % {'type': c[0], 'name': c[1]}
             for c in map(format_column, cls['cols'])
         ])
-        indexes = ' '.join([
-            INDEX_TEMPLATE % {'name': format_index(i)}
-            for i in cls['indexes']
-        ])
         props = ' '.join([
             PROPERTY_TEMPLATE % {'name': format_property(p)}
             for p in cls['props']
         ])
         methods = ' '.join([
             METHOD_TEMPLATE % {'name': m} for m in cls['methods']
+        ])
+        indexes = ' '.join([
+            INDEX_TEMPLATE % {
+                'name': format_index(i['name']),
+                'cols': ','.join(i['cols']),
+            } for i in cls['indexes']
         ])
         renderd = CLASS_TEMPLATE % {
             'name': cls['name'],
