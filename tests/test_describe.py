@@ -44,9 +44,13 @@ class TestDescribe(object):
                 'cols': [
                     ('INTEGER', 'id', 'pk'),
                     ('INTEGER', 'user_id', 'fk'),
+                    ('VARCHAR(150)', 'body', None),
                     ('VARCHAR(50)', 'name', None),
                 ],
-                'indexes': [],
+                'indexes': [
+                    {'cols': ['body'], 'name': 'ix_notes_body'},
+                    {'cols': ['name'], 'name': 'ix_notes_name'}
+                ],
                 'props': [],
                 'methods': [],
             }

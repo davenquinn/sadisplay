@@ -2,7 +2,9 @@
 import uuid
 import types
 import locale
+import operator
 from functools import cmp_to_key
+
 
 from sqlalchemy import exc, orm
 from sqlalchemy.orm import class_mapper
@@ -218,8 +220,11 @@ def describe(
                     result_item['props'].append(name)
 
         # ordering
-        for key in ('indexes', 'methods', 'props'):
+        for key in ('methods', 'props', ):
             result_item[key].sort()
+
+        for key in ('indexes', ):
+            result_item[key].sort(key=operator.itemgetter('name'))
 
         objects.append(result_item)
 

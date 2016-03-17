@@ -91,6 +91,7 @@ notes = Table(
     'notes',
     BASE.metadata,
     Column('id', Integer, primary_key=True),
-    Column('name', Unicode(50), nullable=False),
+    Column('name', Unicode(50), nullable=False, index=True),
     Column('user_id', Integer, ForeignKey('user_table.id')),
+    Column('body', Unicode(150), nullable=False, index=True),
 )
