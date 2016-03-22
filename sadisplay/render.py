@@ -15,9 +15,17 @@ def format_column(column):
 
 
 def format_index(index_name):
-    type_char = u'\U000026B7'
+    type_char = u'\U000000BB'
 
     return '%s %s' % (type_char, index_name)
+
+
+def format_index_type_string(index_columns):
+    if not index_columns:
+        return 'INDEX'
+
+    indexes = ','.join(index_columns)
+    return 'INDEX({0})'.format(indexes)
 
 
 def format_property(property_name):
@@ -71,7 +79,7 @@ def plantuml(desc):
         class_desc += [('%s()' % i, '') for i in cls['methods']]
         # class indexes
         class_desc += [
-            ('INDEX:%s' % ','.join(i['cols']), format_index(i['name']))
+            (format_index_type_string(i['cols']), format_index(i['name']))
             for i in cls['indexes']
         ]
 
@@ -128,7 +136,7 @@ def dot(desc):
         BGCOLOR="palegoldenrod"
         ><FONT FACE="Bitstream Vera Sans">%(name)s</FONT></TD
         ><TD BGCOLOR="palegoldenrod" ALIGN="LEFT"
-        ><FONT FACE="Bitstream Vera Sans">INDEX:%(cols)s</FONT
+        ><FONT FACE="Bitstream Vera Sans">%(type)s</FONT
         ></TD></TR>"""
 
     PROPERTY_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
@@ -184,7 +192,7 @@ def dot(desc):
         indexes = ' '.join([
             INDEX_TEMPLATE % {
                 'name': format_index(i['name']),
-                'cols': ','.join(i['cols']),
+                'type': format_index_type_string(i['cols']),
             } for i in cls['indexes']
         ])
         renderd = CLASS_TEMPLATE % {

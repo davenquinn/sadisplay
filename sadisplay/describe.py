@@ -19,13 +19,16 @@ except ImportError:
 
 
 def describe(
-        items, show_methods=True, show_properties=True, show_indexes=True):
+        items, show_methods=True, show_properties=True, show_indexes=True, show_simple_indexes=True,
+        show_columns_of_indexes=True):
     """Detecting attributes, inherits and relations
 
     :param items: list of objects to describe
     :param show_methods: do detection of methods
     :param show_properties: do detection of properties
     :param show_indexes: do detection of indexes
+    :param show_simple_indexes: show indexes what contains only one column
+    :param show_columns_of_indexes: show columns of detected indexes
 
     Return tuple (objects, relations, inherits)
 
@@ -86,6 +89,27 @@ def describe(
             prefix.get(a[2], '2') + a[1],
             prefix.get(b[2], '2') + b[1],
         )
+
+    def get_indexes():
+        indexes = []
+
+        for index in entity.indexes:
+            if not isinstance(index, Index):
+                continue
+
+            if not show_simple_indexes and len(index.columns) <= 1:
+                continue
+
+            indexes.append({
+                'name': index.name,
+                'cols': get_columns_of_index(index) if show_columns_of_indexes else [],
+            })
+
+        return indexes
+
+    def get_columns_of_index(index):
+        return [c.name for c in index.columns
+                if isinstance(c, Column)]
 
     class EntryItem(object):
         """Class adaptor for mapped classes and tables"""
@@ -195,17 +219,7 @@ def describe(
                         result_item['methods'].append(name)
 
         if show_indexes:
-
-            result_item['indexes'] = [
-                {
-                    'name': index.name,
-                    'cols': [
-                        c.name for c in index.columns
-                        if isinstance(c, Column)
-                    ],
-                } for index in entry.indexes
-                if isinstance(index, Index)
-            ]
+            result_item['indexes'] = get_indexes()
 
         if show_properties:
 
