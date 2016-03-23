@@ -59,9 +59,12 @@ def plantuml(desc):
         'skinparam defaultFontName Courier',
     ]
 
+    def _clean(v):
+        return v.replace('(', '[').replace(')', ']')
+
     def _cleanup(col):
         type, name = col
-        return type.replace('(', '[').replace(')', ']'), name
+        return _clean(type), name
 
     for cls in classes:
         # issue #11 - tabular output of class members (attrs)
@@ -79,8 +82,10 @@ def plantuml(desc):
         class_desc += [('%s()' % i, '') for i in cls['methods']]
         # class indexes
         class_desc += [
-            (format_index_type_string(i['cols']), format_index(i['name']))
-            for i in cls['indexes']
+            (
+                _clean(format_index_type_string(i['cols'])),
+                format_index(i['name'])
+            ) for i in cls['indexes']
         ]
 
         result.append(

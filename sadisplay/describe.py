@@ -19,8 +19,8 @@ except ImportError:
 
 
 def describe(
-        items, show_methods=True, show_properties=True, show_indexes=True, show_simple_indexes=True,
-        show_columns_of_indexes=True):
+        items, show_methods=True, show_properties=True, show_indexes=True,
+        show_simple_indexes=True, show_columns_of_indexes=True):
     """Detecting attributes, inherits and relations
 
     :param items: list of objects to describe
@@ -90,7 +90,7 @@ def describe(
             prefix.get(b[2], '2') + b[1],
         )
 
-    def get_indexes():
+    def get_indexes(entity):
         indexes = []
 
         for index in entity.indexes:
@@ -102,7 +102,8 @@ def describe(
 
             indexes.append({
                 'name': index.name,
-                'cols': get_columns_of_index(index) if show_columns_of_indexes else [],
+                'cols': get_columns_of_index(index)
+                if show_columns_of_indexes else [],
             })
 
         return indexes
@@ -219,7 +220,7 @@ def describe(
                         result_item['methods'].append(name)
 
         if show_indexes:
-            result_item['indexes'] = get_indexes()
+            result_item['indexes'] = get_indexes(entry)
 
         if show_properties:
 
