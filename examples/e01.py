@@ -76,8 +76,13 @@ if __name__ == '__main__':
 
     desc = sadisplay.describe(globals().values())
 
-    with open('schema.plantuml', 'w') as f:
+    with open('schema-plantuml.plantuml', 'w') as f:
         f.write(sadisplay.plantuml(desc))
 
-    with open('schema.dot', 'w') as f:
+    with open('schema-dot.dot', 'w') as f:
         f.write(sadisplay.dot(desc))
+
+    print("""Done. Next:
+    $ plantuml schema-plantuml.plantuml
+    $ dot -Tpng schema-dot.dot > schema-dot.png
+""")
