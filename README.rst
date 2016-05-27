@@ -2,6 +2,10 @@
 sadisplay
 =========
 
+.. image:: https://drone.io/bitbucket.org/estin/pomp/status.png
+    :target: https://drone.io/bitbucket.org/estin/pomp/latest
+    :alt: Latest CI test
+
 About
 =====
 Simple package for describing SQLAlchemy schema and display raw database
@@ -40,6 +44,7 @@ Usage
 
 Write simple script in your project environment::
 
+    import codecs
     import sadisplay
     from yourapp import model
 
@@ -49,13 +54,17 @@ Write simple script in your project environment::
         show_properties=True,
         show_indexes=True,
     )
-    open('schema.plantuml', 'w').write(sadisplay.plantuml(desc))
-    open('schema.dot', 'w').write(sadisplay.dot(desc))
+    with codecs.open('schema.plantuml', 'w', encoding='utf-8') as f:
+        f.write(sadisplay.plantuml(desc))
+    with codecs.open('schema.dot', 'w', encoding='utf-8') as f:
+        f.write(sadisplay.dot(desc))
 
     # Or only part of schema
     desc = sadisplay.describe([model.User, model.Group, model.Persmission])
-    open('auth.plantuml', 'w').write(sadisplay.plantuml(desc))
-    open('auth.dot', 'w').write(sadisplay.dot(desc))
+    with codecs.open('auth.plantuml', 'w', encoding='utf-8') as f:
+        f.write(sadisplay.plantuml(desc))
+    with codecs.open('auth.dot', 'w', encoding='utf-8') as f:
+        f..write(sadisplay.dot(desc))
 
 
 Render PlantUML class diagram::

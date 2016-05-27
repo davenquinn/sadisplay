@@ -40,7 +40,7 @@ def tabular_output(table, indent=None, col_delimiter=None):
     col_width = [max(len(x) for x in col) for col in zip(*table)]
     for line in table:
         yield indent + col_delimiter.join(
-            '{:{}}'.format(x, col_width[i]) for i, x in enumerate(line)
+            u'{:{}}'.format(x, col_width[i]) for i, x in enumerate(line)
         )
 
 
