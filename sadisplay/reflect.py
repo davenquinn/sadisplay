@@ -6,7 +6,6 @@ of a database tables by connection string
 \n\nDatabase connection string - http://goo.gl/3GpnE
 """
 import operator
-import string
 from optparse import OptionParser
 from sqlalchemy import create_engine, MetaData
 from sadisplay import describe, render, __version__
@@ -77,10 +76,10 @@ def run():
     tables = set(meta.tables.keys())
 
     if options.include:
-        tables &= set(map(string.strip, options.include.split(',')))
+        tables &= set(map(str.strip, options.include.split(',')))
 
     if options.exclude:
-        tables -= set(map(string.strip, options.exclude.split(',')))
+        tables -= set(map(str.strip, options.exclude.split(',')))
 
     desc = describe(
         map(lambda x: operator.getitem(meta.tables, x), sorted(tables))
