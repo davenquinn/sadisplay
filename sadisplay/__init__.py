@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '0.4.6'
+__version__ = '0.4.7'
 
 from sadisplay.describe import describe     # flake8: noqa
 from sadisplay.render import plantuml, dot  # flake8: noqa

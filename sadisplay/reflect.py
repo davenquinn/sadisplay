@@ -82,5 +82,7 @@ def run():
     if options.exclude:
         tables -= set(map(string.strip, options.exclude.split(',')))
 
-    desc = describe(map(lambda x: operator.getitem(meta.tables, x), tables))
+    desc = describe(
+        map(lambda x: operator.getitem(meta.tables, x), sorted(tables))
+    )
     print(getattr(render, options.render)(desc))
