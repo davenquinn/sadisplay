@@ -2,10 +2,6 @@
 sadisplay
 =========
 
-.. image:: https://drone.io/bitbucket.org/estin/pomp/status.png
-    :target: https://drone.io/bitbucket.org/estin/pomp/latest
-    :alt: Latest CI test
-
 About
 =====
 Simple package for describing SQLAlchemy schema and display raw database

@@ -3,7 +3,6 @@ from sqlalchemy import Table, Column, Integer, Unicode, ForeignKey, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relation, mapper
 
-
 BASE = declarative_base()
 
 
@@ -47,9 +46,7 @@ books = Table(
     BASE.metadata,
     Column('id', Integer, primary_key=True),
     Column('title', Unicode(200), nullable=False),
-    Column('user_id', Integer, ForeignKey('user_table.id')),
-)
-
+    Column('user_id', Integer, ForeignKey('user_table.id')), )
 
 Index("ix_user_title", books.c.user_id, books.c.title)
 
@@ -60,16 +57,13 @@ class Book(object):
 
 mapper(Book, books, {'user': relation(User, backref='books')})
 
-
 # Not mapped table
 notes = Table(
     'notes',
     BASE.metadata,
     Column('id', Integer, primary_key=True),
     Column('name', Unicode(200), nullable=False),
-    Column('user_id', Integer, ForeignKey('user_table.id')),
-)
-
+    Column('user_id', Integer, ForeignKey('user_table.id')), )
 
 if __name__ == '__main__':
     import sadisplay

@@ -5,7 +5,6 @@ import locale
 import operator
 from functools import cmp_to_key
 
-
 from sqlalchemy import exc, orm
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, Table, Index
@@ -18,9 +17,12 @@ except ImportError:
     from sqlalchemy.sql.expression import Label
 
 
-def describe(
-        items, show_methods=True, show_properties=True, show_indexes=True,
-        show_simple_indexes=True, show_columns_of_indexes=True):
+def describe(items,
+             show_methods=True,
+             show_properties=True,
+             show_indexes=True,
+             show_simple_indexes=True,
+             show_columns_of_indexes=True):
     """Detecting attributes, inherits and relations
 
     :param items: list of objects to describe
@@ -87,8 +89,7 @@ def describe(
         }
         return locale.strcoll(
             prefix.get(a[2], '2') + a[1],
-            prefix.get(b[2], '2') + b[1],
-        )
+            prefix.get(b[2], '2') + b[1], )
 
     def get_indexes(entity):
         indexes = []
@@ -101,16 +102,16 @@ def describe(
                 continue
 
             indexes.append({
-                'name': index.name,
-                'cols': get_columns_of_index(index)
-                if show_columns_of_indexes else [],
+                'name':
+                index.name,
+                'cols':
+                get_columns_of_index(index) if show_columns_of_indexes else [],
             })
 
         return indexes
 
     def get_columns_of_index(index):
-        return [c.name for c in index.columns
-                if isinstance(c, Column)]
+        return [c.name for c in index.columns if isinstance(c, Column)]
 
     class EntryItem(object):
         """Class adaptor for mapped classes and tables"""
@@ -177,15 +178,11 @@ def describe(
     for entry in entries:
 
         result_item = {
-            'name': entry.name,
-            'cols': [
-                (
-                    str(col.type),
-                    name,
-                    column_role(col),
-                ) for name, col in entry.columns.items()
-                if not isinstance(col, Label)
-            ],
+            'name':
+            entry.name,
+            'cols': [(str(col.type), name, column_role(col), )
+                     for name, col in entry.columns.items()
+                     if not isinstance(col, Label)],
             'indexes': [],
             'props': [],
             'methods': [],
@@ -193,8 +190,7 @@ def describe(
 
         # sort columns by role and name
         result_item['cols'].sort(
-            key=cmp_to_key(column_compare),
-        )
+            key=cmp_to_key(column_compare), )
 
         if show_methods and entry.methods:
 

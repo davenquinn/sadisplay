@@ -4,7 +4,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import column_property, relation, mapper
 from sqlalchemy.sql import select
 
-
 BASE = declarative_base()
 
 
@@ -58,8 +57,7 @@ class Employee(User):
 
     # sql expression label
     department = column_property(
-        select([Manager.department]).where(Manager.id == manager_id)
-    )
+        select([Manager.department]).where(Manager.id == manager_id))
 
 
 class Address(BASE):
@@ -75,8 +73,7 @@ books = Table(
     BASE.metadata,
     Column('id', Integer, primary_key=True),
     Column('title', Unicode(50), nullable=False, index=True),
-    Column('user_id', Integer, ForeignKey('user_table.id')),
-)
+    Column('user_id', Integer, ForeignKey('user_table.id')), )
 
 
 class Book(object):
@@ -85,7 +82,6 @@ class Book(object):
 
 mapper(Book, books, {'user': relation(User, backref='books')})
 
-
 # Not mapped table
 notes = Table(
     'notes',
@@ -93,5 +89,4 @@ notes = Table(
     Column('id', Integer, primary_key=True),
     Column('name', Unicode(50), nullable=False, index=True),
     Column('user_id', Integer, ForeignKey('user_table.id')),
-    Column('body', Unicode(150), nullable=False, index=True),
-)
+    Column('body', Unicode(150), nullable=False, index=True), )

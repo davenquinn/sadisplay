@@ -9,3 +9,4 @@ html_docs/
 docs/_build/
 build/
 *.csv
+.pytest_cache

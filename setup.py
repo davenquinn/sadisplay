@@ -7,7 +7,6 @@ try:
 except ImportError:
     from distutils.core import setup
 
-
 here = os.path.dirname(os.path.abspath(__file__))
 version_re = re.compile(r"__version__ = (\'.*?\')")
 with open(os.path.join(os.path.join(here, 'sadisplay'), '__init__.py')) as f:
@@ -20,7 +19,6 @@ with open(os.path.join(os.path.join(here, 'sadisplay'), '__init__.py')) as f:
     else:
         raise Exception("Cannot find version in sadisplay.py")
 
-
 setup(
     name='sadisplay',
     version=version,
@@ -30,16 +28,18 @@ setup(
     author_email='tatarkin.evg@gmail.com',
     description='SqlAlchemy schema display script',
     long_description=open(os.path.join(here, 'README.rst')).read(),
-    packages=['sadisplay', ],
+    packages=[
+        'sadisplay',
+    ],
     zip_safe=False,
     platforms='any',
-    tests_require=['nose >= 1.0', ],
-    test_suite='nose.collector',
     install_requires=[
         'SQLAlchemy >= 0.5',
     ],
     entry_points={
-        'console_scripts': ['sadisplay = sadisplay.reflect:run', ],
+        'console_scripts': [
+            'sadisplay = sadisplay.reflect:run',
+        ],
     },
     classifiers=[
         'Intended Audience :: Developers',
@@ -47,5 +47,4 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-    ],
-)
+    ], )
