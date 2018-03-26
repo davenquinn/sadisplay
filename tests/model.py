@@ -4,6 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import column_property, relation, mapper
 from sqlalchemy.sql import select
 
+from sadisplay.describe import SQLALCHEMY_VERSION
+
 BASE = declarative_base()
 
 
@@ -90,3 +92,19 @@ notes = Table(
     Column('name', Unicode(50), nullable=False, index=True),
     Column('user_id', Integer, ForeignKey('user_table.id')),
     Column('body', Unicode(150), nullable=False, index=True), )
+
+if SQLALCHEMY_VERSION >= (1, 1):
+
+    from sqlalchemy import JSON
+
+    class JsonData(BASE):
+        __tablename__ = 'json_data_declarative'
+
+        id = Column(Integer, primary_key=True)
+        data = Column(JSON)
+
+    json_data = Table('json_data', BASE.metadata,
+                      Column('id', Integer, primary_key=True),
+                      Column(
+                          'data',
+                          JSON, ))

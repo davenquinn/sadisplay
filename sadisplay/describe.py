@@ -5,6 +5,7 @@ import locale
 import operator
 from functools import cmp_to_key
 
+import sqlalchemy
 from sqlalchemy import exc, orm
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import Column, Integer, Table, Index
@@ -15,6 +16,8 @@ try:
     from sqlalchemy.sql.elements import Label
 except ImportError:
     from sqlalchemy.sql.expression import Label
+
+SQLALCHEMY_VERSION = tuple(map(int, sqlalchemy.__version__.split('.')))
 
 
 def describe(items,
@@ -75,6 +78,13 @@ def describe(items,
 
         desc = sadisplay.describe([models.User, models.Group])
     """
+
+    def column_type(column):
+        try:
+            return str(column.type)
+        except Exception:
+            # https://bitbucket.org/estin/sadisplay/issues/17/cannot-render-json-column-type
+            return type(column.type).__name__.upper()
 
     def column_role(column):
         if column.primary_key:
@@ -180,7 +190,7 @@ def describe(items,
         result_item = {
             'name':
             entry.name,
-            'cols': [(str(col.type), name, column_role(col), )
+            'cols': [(column_type(col), name, column_role(col), )
                      for name, col in entry.columns.items()
                      if not isinstance(col, Label)],
             'indexes': [],
