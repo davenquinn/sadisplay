@@ -1,0 +1,15 @@
+    edge [
+      arrowhead = ediamond
+      arrowtail = open
+      ]
+    {% for i in inherits -%}
+    {{ i.child }} -> {{ i.parent }}
+    {%- endfor %}
+    edge [
+        arrowhead = ediamond
+        arrowtail = open
+    ]
+    {%- for i in relations %}
+    "{{ i.from }}" -> "{{ i.to }}" [label = "{{ i.by }}"]
+    {%- endfor -%}
+
