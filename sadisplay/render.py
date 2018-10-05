@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from sadisplay import __version__
 
+from jinja2 import Environment, PackageLoader, select_autoescape
+env = Environment(
+    loader=PackageLoader('sadisplay', 'templates'))
 
 # by pull request
 # https://bitbucket.org/estin/sadisplay/pull-requests/4/format-table-info/diff
@@ -122,12 +125,6 @@ def dot(desc):
     >]
     """
 
-    COLUMN_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
-        ><FONT FACE="Fira Code Regular">%(name)s </FONT
-        ></TD><TD ALIGN="LEFT"
-        ><FONT FACE="Fira Code Regular">%(type)s</FONT
-        ></TD></TR>"""
-
     INDEX_TEMPLATE = """<TR><TD ALIGN="LEFT" BORDER="0"
         BGCOLOR="palegoldenrod"
         ><FONT FACE="Fira Code Regular">%(name)s</FONT></TD
@@ -176,12 +173,10 @@ def dot(desc):
     ]
 
     for cls in classes:
+        template = env.get_template('column.html')
         cols = ' '.join([
-            COLUMN_TEMPLATE % {
-                'type': c[0],
-                'name': c[1]
-            } for c in map(format_column, cls['cols'])
-        ])
+            template.render(type=c[0], name=c[1])
+            for c in map(format_column, cls['cols'])])
         props = ' '.join([
             PROPERTY_TEMPLATE % {
                 'name': format_property(p)
@@ -197,13 +192,13 @@ def dot(desc):
                 'type': format_index_type_string(i['cols']),
             } for i in cls['indexes']
         ])
-        renderd = CLASS_TEMPLATE % {
-            'name': cls['name'],
-            'cols': cols,
-            'indexes': indexes,
-            'props': props,
-            'methods': methods,
-        }
+        template = env.get_template('class.html')
+        renderd = template.render(
+            name=cls['name'],
+            cols=cols,
+            indexes=indexes,
+            props=props,
+            methods=methods)
 
         result.append(renderd)
 

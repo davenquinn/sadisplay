@@ -35,6 +35,7 @@ setup(
     platforms='any',
     install_requires=[
         'SQLAlchemy >= 0.5',
+        'jinja2'
     ],
     entry_points={
         'console_scripts': [
