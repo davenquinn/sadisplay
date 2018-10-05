@@ -10,9 +10,9 @@ env = Environment(
 def format_column(column):
     type, name, role = column
     role_char = {
-        'pk': u'\U00002605',
-        'fk': u'\U00002606',
-    }.get(role, u'\U000026AA')
+        'pk': u'■',
+        'fk': u'□',
+    }.get(role, u' ')
 
     return type, '%s %s' % (role_char, name)
 
