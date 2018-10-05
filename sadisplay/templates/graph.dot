@@ -1,0 +1,16 @@
+digraph G {
+    fontname = "Fira Code Regular"
+    fontsize = 8
+
+    node [
+        fontname = "Fira Code Regular"
+        fontsize = 8
+        shape = "plaintext"
+    ]
+
+    edge [
+        fontname = "Fira Code Regular"
+        fontsize = 8
+    ]
+{{ template }}
+}

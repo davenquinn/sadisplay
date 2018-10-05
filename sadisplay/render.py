@@ -113,31 +113,7 @@ def dot(desc):
 
     classes, relations, inherits = desc
 
-    EDGE_INHERIT = "\tedge [\n\t\tarrowhead = empty\n\t]"
-    INHERIT_TEMPLATE = "\t%(child)s -> %(parent)s \n"
-
-    EDGE_REL = "\tedge [\n\t\tarrowhead = ediamond\n\t\tarrowtail = open\n\t]"
-    RELATION_TEMPLATE = "\t\"%(from)s\" -> \"%(to)s\" [label = \"%(by)s\"]"
-
-    result = [
-        """
-        digraph G {
-            fontname = "Fira Code Regular"
-            fontsize = 8
-
-            node [
-                fontname = "Fira Code Regular"
-                fontsize = 8
-                shape = "plaintext"
-            ]
-
-            edge [
-                fontname = "Fira Code Regular"
-                fontsize = 8
-            ]
-    """
-    ]
-
+    result = []
     for cls in classes:
         template = env.get_template('column.html')
         cols = ' '.join([
@@ -177,6 +153,7 @@ def dot(desc):
     tpl = env.get_template("edges.html")
     result += [tpl.render(inherits=inherits,relations=relations)]
 
-    result += ['}']
+    _ = '\n'.join(result)
 
-    return '\n'.join(result)
+    return env.get_template("graph.dot").render(template=_)
+
