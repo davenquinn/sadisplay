@@ -14,7 +14,7 @@ def format_column(column):
         'fk': u'□',
     }.get(role, u' ')
 
-    return type, '%s %s' % (role_char, name)
+    return type, name, '%s %s' % (role_char, name)
 
 
 def format_index(index_name):
@@ -117,7 +117,7 @@ def dot(desc):
     for cls in classes:
         template = env.get_template('column.html')
         cols = ' '.join([
-            template.render(type=c[0], name=c[1])
+            template.render(type=c[0], name=c[1], pretty_name=c[2])
             for c in map(format_column, cls['cols'])])
 
 
