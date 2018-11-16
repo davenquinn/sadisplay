@@ -260,6 +260,7 @@ def describe(items,
                                 'from': entry.name,
                                 'by': col.name,
                                 'to': m.name,
+                                'to_col': fk.column.name
                             })
                     except AttributeError:
                         pass
