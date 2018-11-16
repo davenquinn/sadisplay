@@ -3,19 +3,46 @@
  https://spin.atomicobject.com/2017/11/15/table-rel-diagrams-graphviz/
 */
 digraph G {
-    fontname = "Fira Code Regular"
-    fontsize = 8
-    rankdir=LR
+  fontname = "Fira Code Regular"
+  fontsize = 8
+  rankdir=LR
+  concentrate=true
 
-    node [
-        fontname = "Fira Code Regular"
-        fontsize = 8
-        shape = "plaintext"
-    ]
+  node [
+      fontname = "Fira Code Regular"
+      fontsize = 8
+      shape = "plaintext"
+  ]
 
-    edge [
-        fontname = "Fira Code Regular"
-        fontsize = 8
-    ]
-{{ template }}
+  edge [
+      fontname = "Fira Code Regular"
+      fontsize = 8
+  ]
+{% if graphs|length > 1 %}
+{% for graph in graphs -%}
+  subgraph cluster_{{ loop.index }} {
+    color=invis;
+    {{ graph | indent(4) }}
+  }
+{%- endfor %}
+{% else %}
+  {{ graphs[0] | indent(4) }}
+{% endif %}
+
+edge [
+  arrowhead = normal;
+  arrowtail = dot;
+  ]
+
+{% for i in inherits -%}
+{{ i.child }} -> {{ i.parent }}
+{%- endfor %}
+edge [
+  arrowhead = normal;
+  arrowtail = dot;
+  ]
+{%- for i in relations %}
+{{ i.from }}:{{ i.by }}_out:e -> {{ i.to }}:{{ i.to_col }}_in:w
+{%- endfor -%}
+
 }

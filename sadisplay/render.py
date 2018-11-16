@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from sadisplay import __version__
+from collections import defaultdict
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 env = Environment(
@@ -103,7 +104,7 @@ def plantuml(desc):
     return '\n\n'.join(result)
 
 
-def dot(desc):
+def dot(desc, schema_subgraphs=True):
     """Generate dot file
 
     :param desc: result of sadisplay.describe function
@@ -113,47 +114,59 @@ def dot(desc):
 
     classes, relations, inherits = desc
 
-    result = []
-    for cls in classes:
-        template = env.get_template('column.html')
-        cols = ' '.join([
-            template.render(type=c[0], name=c[1], pretty_name=c[2])
-            for c in map(format_column, cls['cols'])])
+    subgraphs = dict(default=classes)
+    if schema_subgraphs:
+        subgraphs = defaultdict(list)
+        for cls in classes:
+            subgraphs[cls['schema']].append(cls)
+
+    graphs = []
+    for key, classes in subgraphs.items():
+        result = []
+        for cls in classes:
+            template = env.get_template('column.html')
+            cols = ' '.join([
+                template.render(
+                    type=c[0],
+                    name=c[1],
+                    pretty_name=c[2]
+                )
+                for c in map(format_column, cls['cols'])])
 
 
-        ix_template = env.get_template('index.html')
-        props = ' '.join([
-            ix_template.render(
-                name=format_property(p),
-                type="PROPERTY"
-            )  for p in cls['props']
-        ])
-        methods = ' '.join([
-            ix_template.render(
-                name=m,
-                type="METHOD"
-            ) for m in cls['methods']])
+            ix_template = env.get_template('index.html')
+            props = ' '.join([
+                ix_template.render(
+                    name=format_property(p),
+                    type="PROPERTY"
+                )  for p in cls['props']
+            ])
+            methods = ' '.join([
+                ix_template.render(
+                    name=m,
+                    type="METHOD"
+                ) for m in cls['methods']])
 
-        indexes = ' '.join([
-            template.render(
-                name=format_index(i['name']),
-                type=format_index_type_string(i['cols']),
-            ) for i in cls['indexes']
-        ])
-        template = env.get_template('class.html')
-        renderd = template.render(
-            name=cls['name'],
-            cols=cols,
-            indexes=indexes,
-            props=props,
-            methods=methods)
+            indexes = ' '.join([
+                template.render(
+                    name=format_index(i['name']),
+                    type=format_index_type_string(i['cols']),
+                ) for i in cls['indexes']
+            ])
+            template = env.get_template('class.html')
+            renderd = template.render(
+                name=cls['name'],
+                schema=cls['schema'],
+                cols=cols,
+                indexes=indexes,
+                props=props,
+                methods=methods)
 
-        result.append(renderd)
+            result.append(renderd)
 
-    tpl = env.get_template("edges.html")
-    result += [tpl.render(inherits=inherits,relations=relations)]
 
-    _ = '\n'.join(result)
+        graphs.append('\n'.join(result))
 
-    return env.get_template("graph.dot").render(template=_)
+    return env.get_template("graph.dot").render(
+        graphs=graphs, inherits=inherits,relations=relations)
 
