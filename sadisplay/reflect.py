@@ -50,6 +50,12 @@ def run():
         dest='exclude',
         help='List of tables to exlude through ","', )
 
+    parser.add_option(
+        '-s',
+        '--schema',
+        dest='schema',
+        help='Additional schemas (besides `public`) ","', )
+
     (options, args) = parser.parse_args()
 
     if not options.url:
@@ -59,7 +65,12 @@ def run():
     engine = create_engine(options.url)
     meta = MetaData()
 
-    meta.reflect(bind=engine)
+    # Set schema(s) to reflect
+    schema = 'public'
+    if options.schema:
+        schema = options.schema
+    for s in schema.split(','):
+        meta.reflect(bind=engine,schema=s)
 
     if options.list:
         print('Database tables:')

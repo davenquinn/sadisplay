@@ -152,6 +152,7 @@ def describe(items,
                 self.table_name = table.name
                 # prepend schema if exists for foreign key matching
                 if hasattr(table, "schema") and table.schema:
+                    self.schema = table.schema
                     self.table_name = table.schema + "." + self.table_name
                 self.columns = table.columns
                 self.indexes = table.indexes
@@ -188,8 +189,8 @@ def describe(items,
     for entry in entries:
 
         result_item = {
-            'name':
-            entry.name,
+            'name': entry.name,
+            'schema': entry.schema,
             'cols': [(column_type(col), name, column_role(col), )
                      for name, col in entry.columns.items()
                      if not isinstance(col, Label)],
@@ -260,6 +261,7 @@ def describe(items,
                                 'from': entry.name,
                                 'by': col.name,
                                 'to': m.name,
+                                'to_col': fk.column.name
                             })
                     except AttributeError:
                         pass
